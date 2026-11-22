@@ -1,0 +1,196 @@
+{
+  "run_id": "run-20261122192456-1a64e4",
+  "tag": "ac2-esign-reject",
+  "base_url": "http://127.0.0.1:51539",
+  "started_at": "2026-11-22T11:24:56+00:00",
+  "skip_mini": false,
+  "mini_driver": "playwright-h5",
+  "esign_reject": true,
+  "ok": false,
+  "screenshot": "reports/artifacts/failure_step8_1a64e4.png",
+  "failed_step": "电子签",
+  "failed_step_index": 8,
+  "error": "AssertionError: esign -> 422 {\"error\":{\"code\":\"ESIGN_REJECTED\",\"message\":\"signer rejected the contract (injected)\",\"step\":\"电子签\"}}",
+  "trace": [
+    {
+      "method": "POST",
+      "path": "/api/contracts/esign",
+      "status": 422,
+      "ms": 1.4,
+      "body": "{\"error\":{\"code\":\"ESIGN_REJECTED\",\"message\":\"signer rejected the contract (injected)\",\"step\":\"电子签\"}}"
+    },
+    {
+      "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py\", line 92, in _exec\n    fn()\n  File \"/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py\", line 194, in s8_esign\n    self.expect(r.status_code == 200, f\"esign -> {r.status_code} {r.text[:200]}\")\n  File \"/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py\", line 86, in expect\n    raise AssertionError(message)\nAssertionError: esign -> 422 {\"error\":{\"code\":\"ESIGN_REJECTED\",\"message\":\"signer rejected the contract (injected)\",\"step\":\"电子签\"}}\n"
+    }
+  ],
+  "data_ids": {
+    "run_id": "run-20261122192456-1a64e4",
+    "application_id": "app-2159790f7ba6",
+    "lead_id": "lead-961ef5e04f8a",
+    "assigned_to": "sp-bob",
+    "visit_id": "visit-5d544c895b0a",
+    "checked_in_visit_id": "visit-5d544c895b0a",
+    "quote_id": "quote-79622fc096ea"
+  },
+  "steps": [
+    {
+      "index": 1,
+      "name": "官网提交申请",
+      "status": "passed",
+      "duration_ms": 188.0,
+      "trace": [
+        {
+          "method": "BROWSER",
+          "path": "POST /apply (form submit)",
+          "status": "ok",
+          "application_id": "app-2159790f7ba6",
+          "lead_id": "lead-961ef5e04f8a"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "线索按规则分配",
+      "status": "passed",
+      "duration_ms": 1.5,
+      "trace": [
+        {
+          "method": "GET",
+          "path": "/api/crm/leads/lead-961ef5e04f8a",
+          "status": 200,
+          "ms": 1.5,
+          "body": "{\"id\":\"lead-961ef5e04f8a\",\"run_id\":\"run-20261122192456-1a64e4\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T11:24:56.588+00:00\",\"created_by\":\"lead-router\",\"updated_at\":\"2026-11-22T11:24:56.588+00:00\",\"deleted_at\":null,\"application_id\":\"app-2159790f7ba6\",\"company\":\"虚构会员企业-1a64e4\",\"assigned_to\":\"sp-bob\",\"status\":\"assigned\",\"first_contact_at\":null}"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "顾问首次联系",
+      "status": "passed",
+      "duration_ms": 1.2,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-961ef5e04f8a/contact",
+          "status": 200,
+          "ms": 1.2,
+          "body": "{\"lead_id\":\"lead-961ef5e04f8a\",\"status\":\"contacted\",\"first_contact_at\":\"2026-11-22T11:24:56.646+00:00\"}"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "推进到预约参观",
+      "status": "passed",
+      "duration_ms": 1.2,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-961ef5e04f8a/visit",
+          "status": 200,
+          "ms": 1.2,
+          "body": "{\"visit_id\":\"visit-5d544c895b0a\",\"code\":\"100004\",\"status\":\"scheduled\",\"lead_status\":\"visit_scheduled\"}"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "name": "前台核销访客码",
+      "status": "passed",
+      "duration_ms": 144.0,
+      "trace": [
+        {
+          "method": "BROWSER",
+          "path": "POST /desk/verify (form submit)",
+          "status": "ok",
+          "code": "100004",
+          "visit_id": "visit-5d544c895b0a"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "name": "纪要确认",
+      "status": "passed",
+      "duration_ms": 1.8,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-961ef5e04f8a/minutes",
+          "status": 200,
+          "ms": 1.7,
+          "body": "{\"minutes_id\":\"min-371204fd4f4b\",\"confirmed\":true,\"lead_status\":\"minutes_confirmed\"}"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "name": "9.5折以内报价",
+      "status": "passed",
+      "duration_ms": 1.4,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-961ef5e04f8a/quotes",
+          "status": 200,
+          "ms": 1.4,
+          "body": "{\"quote_id\":\"quote-79622fc096ea\",\"monthly_cents\":1200000,\"discount_bps\":9500,\"net_monthly_cents\":1140000,\"status\":\"approved\",\"lead_status\":\"quoted\"}"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "name": "电子签",
+      "status": "failed",
+      "duration_ms": 1.4,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/contracts/esign",
+          "status": 422,
+          "ms": 1.4,
+          "body": "{\"error\":{\"code\":\"ESIGN_REJECTED\",\"message\":\"signer rejected the contract (injected)\",\"step\":\"电子签\"}}"
+        }
+      ]
+    }
+  ],
+  "total_ms": 911.7,
+  "finished_at": "2026-11-22T11:24:56+00:00",
+  "cleanup": {
+    "run_id": "run-20261122192456-1a64e4",
+    "removed": {
+      "applications": 1,
+      "leads": 1,
+      "visits": 1,
+      "minutes": 1,
+      "quotes": 1
+    },
+    "remaining": {
+      "applications": 0,
+      "leads": 0,
+      "visits": 0,
+      "minutes": 0,
+      "quotes": 0,
+      "contracts": 0,
+      "rooms": 0,
+      "handovers": 0,
+      "members": 0
+    },
+    "total_remaining": 0
+  },
+  "counts_after_cleanup": {
+    "run_id": "run-20261122192456-1a64e4",
+    "counts": {
+      "applications": 0,
+      "leads": 0,
+      "visits": 0,
+      "minutes": 0,
+      "quotes": 0,
+      "contracts": 0,
+      "rooms": 0,
+      "handovers": 0,
+      "members": 0
+    },
+    "total": 0
+  }
+}

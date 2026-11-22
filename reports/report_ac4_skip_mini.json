@@ -1,0 +1,240 @@
+{
+  "run_id": "run-20261122192457-ee88be",
+  "tag": "ac4-skip-mini",
+  "base_url": "http://127.0.0.1:51539",
+  "started_at": "2026-11-22T11:24:57+00:00",
+  "skip_mini": true,
+  "mini_driver": "playwright-h5",
+  "esign_reject": false,
+  "ok": true,
+  "steps": [
+    {
+      "index": 1,
+      "name": "官网提交申请",
+      "status": "passed",
+      "duration_ms": 196.7,
+      "trace": [
+        {
+          "method": "BROWSER",
+          "path": "POST /apply (form submit)",
+          "status": "ok",
+          "application_id": "app-1c4bef87e06a",
+          "lead_id": "lead-107b4539f09a"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "name": "线索按规则分配",
+      "status": "passed",
+      "duration_ms": 1.6,
+      "trace": [
+        {
+          "method": "GET",
+          "path": "/api/crm/leads/lead-107b4539f09a",
+          "status": 200,
+          "ms": 1.5,
+          "body": "{\"id\":\"lead-107b4539f09a\",\"run_id\":\"run-20261122192457-ee88be\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T11:24:58.539+00:00\",\"created_by\":\"lead-router\",\"updated_at\":\"2026-11-22T11:24:58.539+00:00\",\"deleted_at\":null,\"application_id\":\"app-1c4bef87e06a\",\"company\":\"虚构会员企业-ee88be\",\"assigned_to\":\"sp-bob\",\"status\":\"assigned\",\"first_contact_at\":null}"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "name": "顾问首次联系",
+      "status": "passed",
+      "duration_ms": 1.2,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-107b4539f09a/contact",
+          "status": 200,
+          "ms": 1.2,
+          "body": "{\"lead_id\":\"lead-107b4539f09a\",\"status\":\"contacted\",\"first_contact_at\":\"2026-11-22T11:24:58.601+00:00\"}"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "name": "推进到预约参观",
+      "status": "passed",
+      "duration_ms": 1.1,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-107b4539f09a/visit",
+          "status": 200,
+          "ms": 1.1,
+          "body": "{\"visit_id\":\"visit-657f9820f199\",\"code\":\"100008\",\"status\":\"scheduled\",\"lead_status\":\"visit_scheduled\"}"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "name": "前台核销访客码",
+      "status": "passed",
+      "duration_ms": 158.9,
+      "trace": [
+        {
+          "method": "BROWSER",
+          "path": "POST /desk/verify (form submit)",
+          "status": "ok",
+          "code": "100008",
+          "visit_id": "visit-657f9820f199"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "name": "纪要确认",
+      "status": "passed",
+      "duration_ms": 1.6,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-107b4539f09a/minutes",
+          "status": 200,
+          "ms": 1.6,
+          "body": "{\"minutes_id\":\"min-873de2dde2e5\",\"confirmed\":true,\"lead_status\":\"minutes_confirmed\"}"
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "name": "9.5折以内报价",
+      "status": "passed",
+      "duration_ms": 1.2,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/sales/leads/lead-107b4539f09a/quotes",
+          "status": 200,
+          "ms": 1.1,
+          "body": "{\"quote_id\":\"quote-60f60cc930f8\",\"monthly_cents\":1200000,\"discount_bps\":9500,\"net_monthly_cents\":1140000,\"status\":\"approved\",\"lead_status\":\"quoted\"}"
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "name": "电子签",
+      "status": "passed",
+      "duration_ms": 1.1,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/contracts/esign",
+          "status": 200,
+          "ms": 1.1,
+          "body": "{\"contract_id\":\"ctr-772afb161a12\",\"status\":\"signed\",\"signed_by_applicant\":true,\"signed_by_org\":true,\"room_id\":\"room-1201\",\"room_status\":\"rented\",\"lead_status\":\"rented\"}"
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "name": "房态变为已租",
+      "status": "passed",
+      "duration_ms": 1.1,
+      "trace": [
+        {
+          "method": "GET",
+          "path": "/api/site/rooms/room-1201",
+          "status": 200,
+          "ms": 1.0,
+          "body": "{\"id\":\"room-1201\",\"run_id\":\"seed\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T11:24:54.844+00:00\",\"created_by\":\"seed\",\"updated_at\":\"2026-11-22T11:24:58.765+00:00\",\"deleted_at\":null,\"room_no\":\"1201\",\"status\":\"rented\",\"contract_id\":\"ctr-772afb161a12\",\"lead_id\":\"lead-107b4539f09a\",\"lease_run_id\":\"run-20261122192457-ee88be\"}"
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "name": "会员经理领取交接",
+      "status": "passed",
+      "duration_ms": 1.1,
+      "trace": [
+        {
+          "method": "POST",
+          "path": "/api/ops/handovers",
+          "status": 200,
+          "ms": 1.1,
+          "body": "{\"handover_id\":\"hnd-f80d925e7146\",\"status\":\"claimed\",\"lead_status\":\"handover_claimed\"}"
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "name": "小程序认证",
+      "status": "skipped",
+      "duration_ms": 0.0,
+      "trace": [
+        {
+          "note": "SKIP_MINI=1"
+        }
+      ],
+      "asserted": "skipped by marker"
+    },
+    {
+      "index": 12,
+      "name": "小程序首页资源推荐",
+      "status": "skipped",
+      "duration_ms": 0.0,
+      "trace": [
+        {
+          "note": "SKIP_MINI=1"
+        }
+      ],
+      "asserted": "skipped by marker"
+    }
+  ],
+  "total_ms": 829.4,
+  "finished_at": "2026-11-22T11:24:58+00:00",
+  "data_ids": {
+    "run_id": "run-20261122192457-ee88be",
+    "application_id": "app-1c4bef87e06a",
+    "lead_id": "lead-107b4539f09a",
+    "assigned_to": "sp-bob",
+    "visit_id": "visit-657f9820f199",
+    "checked_in_visit_id": "visit-657f9820f199",
+    "quote_id": "quote-60f60cc930f8",
+    "contract_id": "ctr-772afb161a12",
+    "room_id": "room-1201",
+    "handover_id": "hnd-f80d925e7146"
+  },
+  "cleanup": {
+    "run_id": "run-20261122192457-ee88be",
+    "removed": {
+      "applications": 1,
+      "leads": 1,
+      "visits": 1,
+      "minutes": 1,
+      "quotes": 1,
+      "contracts": 1,
+      "handovers": 1,
+      "rooms_released": 1
+    },
+    "remaining": {
+      "applications": 0,
+      "leads": 0,
+      "visits": 0,
+      "minutes": 0,
+      "quotes": 0,
+      "contracts": 0,
+      "rooms": 0,
+      "handovers": 0,
+      "members": 0
+    },
+    "total_remaining": 0
+  },
+  "counts_after_cleanup": {
+    "run_id": "run-20261122192457-ee88be",
+    "counts": {
+      "applications": 0,
+      "leads": 0,
+      "visits": 0,
+      "minutes": 0,
+      "quotes": 0,
+      "contracts": 0,
+      "rooms": 0,
+      "handovers": 0,
+      "members": 0
+    },
+    "total": 0
+  }
+}
