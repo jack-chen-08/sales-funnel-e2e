@@ -99,6 +99,8 @@ class ChainRunner:
                 "trace": self._step_trace,
             })
             tb = "".join(traceback.format_exception(type(cause), cause, cause.__traceback__))
+            # 报告里的异常栈去掉本机绝对路径，保证 clone 即可复现、不泄漏运行环境
+            tb = tb.replace(str(ROOT) + "/", "").replace(str(ROOT), ".")
             raise StepFailed(name, index, cause,
                              list(self._step_trace) + [{"traceback": tb[-2000:]}],
                              dict(self.data_ids)) from cause

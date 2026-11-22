@@ -38,11 +38,11 @@
 
 ```
 Traceback (most recent call last):
-  File "/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py", line 92, in _exec
+  File "chain/runner.py", line 92, in _exec
     fn()
-  File "/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py", line 194, in s8_esign
+  File "chain/runner.py", line 194, in s8_esign
     self.expect(r.status_code == 200, f"esign -> {r.status_code} {r.text[:200]}")
-  File "/home/ubuntuuser/work/clawhunt/2828_sales_e2e/chain/runner.py", line 86, in expect
+  File "chain/runner.py", line 86, in expect
     raise AssertionError(message)
 AssertionError: esign -> 422 {"error":{"code":"ESIGN_REJECTED","message":"signer rejected the contract (injected)","step":"电子签"}}
 

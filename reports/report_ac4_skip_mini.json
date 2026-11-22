@@ -1,8 +1,8 @@
 {
-  "run_id": "run-20261122192457-ee88be",
+  "run_id": "run-20261122215150-92d7c6",
   "tag": "ac4-skip-mini",
-  "base_url": "http://127.0.0.1:51539",
-  "started_at": "2026-11-22T11:24:57+00:00",
+  "base_url": "http://127.0.0.1:44273",
+  "started_at": "2026-11-22T13:51:50+00:00",
   "skip_mini": true,
   "mini_driver": "playwright-h5",
   "esign_reject": false,
@@ -12,14 +12,14 @@
       "index": 1,
       "name": "官网提交申请",
       "status": "passed",
-      "duration_ms": 196.7,
+      "duration_ms": 218.6,
       "trace": [
         {
           "method": "BROWSER",
           "path": "POST /apply (form submit)",
           "status": "ok",
-          "application_id": "app-1c4bef87e06a",
-          "lead_id": "lead-107b4539f09a"
+          "application_id": "app-251b5f197734",
+          "lead_id": "lead-3c86d5590472"
         }
       ]
     },
@@ -27,14 +27,14 @@
       "index": 2,
       "name": "线索按规则分配",
       "status": "passed",
-      "duration_ms": 1.6,
+      "duration_ms": 1.7,
       "trace": [
         {
           "method": "GET",
-          "path": "/api/crm/leads/lead-107b4539f09a",
+          "path": "/api/crm/leads/lead-3c86d5590472",
           "status": 200,
-          "ms": 1.5,
-          "body": "{\"id\":\"lead-107b4539f09a\",\"run_id\":\"run-20261122192457-ee88be\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T11:24:58.539+00:00\",\"created_by\":\"lead-router\",\"updated_at\":\"2026-11-22T11:24:58.539+00:00\",\"deleted_at\":null,\"application_id\":\"app-1c4bef87e06a\",\"company\":\"虚构会员企业-ee88be\",\"assigned_to\":\"sp-bob\",\"status\":\"assigned\",\"first_contact_at\":null}"
+          "ms": 1.7,
+          "body": "{\"id\":\"lead-3c86d5590472\",\"run_id\":\"run-20261122215150-92d7c6\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T13:51:51.069+00:00\",\"created_by\":\"lead-router\",\"updated_at\":\"2026-11-22T13:51:51.069+00:00\",\"deleted_at\":null,\"application_id\":\"app-251b5f197734\",\"company\":\"虚构会员企业-92d7c6\",\"assigned_to\":\"sp-bob\",\"status\":\"assigned\",\"first_contact_at\":null}"
         }
       ]
     },
@@ -46,10 +46,10 @@
       "trace": [
         {
           "method": "POST",
-          "path": "/api/sales/leads/lead-107b4539f09a/contact",
+          "path": "/api/sales/leads/lead-3c86d5590472/contact",
           "status": 200,
           "ms": 1.2,
-          "body": "{\"lead_id\":\"lead-107b4539f09a\",\"status\":\"contacted\",\"first_contact_at\":\"2026-11-22T11:24:58.601+00:00\"}"
+          "body": "{\"lead_id\":\"lead-3c86d5590472\",\"status\":\"contacted\",\"first_contact_at\":\"2026-11-22T13:51:51.138+00:00\"}"
         }
       ]
     },
@@ -57,14 +57,14 @@
       "index": 4,
       "name": "推进到预约参观",
       "status": "passed",
-      "duration_ms": 1.1,
+      "duration_ms": 1.3,
       "trace": [
         {
           "method": "POST",
-          "path": "/api/sales/leads/lead-107b4539f09a/visit",
+          "path": "/api/sales/leads/lead-3c86d5590472/visit",
           "status": 200,
-          "ms": 1.1,
-          "body": "{\"visit_id\":\"visit-657f9820f199\",\"code\":\"100008\",\"status\":\"scheduled\",\"lead_status\":\"visit_scheduled\"}"
+          "ms": 1.2,
+          "body": "{\"visit_id\":\"visit-ea745dd045c3\",\"code\":\"100008\",\"status\":\"scheduled\",\"lead_status\":\"visit_scheduled\"}"
         }
       ]
     },
@@ -72,14 +72,14 @@
       "index": 5,
       "name": "前台核销访客码",
       "status": "passed",
-      "duration_ms": 158.9,
+      "duration_ms": 157.9,
       "trace": [
         {
           "method": "BROWSER",
           "path": "POST /desk/verify (form submit)",
           "status": "ok",
           "code": "100008",
-          "visit_id": "visit-657f9820f199"
+          "visit_id": "visit-ea745dd045c3"
         }
       ]
     },
@@ -91,10 +91,10 @@
       "trace": [
         {
           "method": "POST",
-          "path": "/api/sales/leads/lead-107b4539f09a/minutes",
+          "path": "/api/sales/leads/lead-3c86d5590472/minutes",
           "status": 200,
-          "ms": 1.6,
-          "body": "{\"minutes_id\":\"min-873de2dde2e5\",\"confirmed\":true,\"lead_status\":\"minutes_confirmed\"}"
+          "ms": 1.5,
+          "body": "{\"minutes_id\":\"min-fd17d9b4c629\",\"confirmed\":true,\"lead_status\":\"minutes_confirmed\"}"
         }
       ]
     },
@@ -102,14 +102,14 @@
       "index": 7,
       "name": "9.5折以内报价",
       "status": "passed",
-      "duration_ms": 1.2,
+      "duration_ms": 1.3,
       "trace": [
         {
           "method": "POST",
-          "path": "/api/sales/leads/lead-107b4539f09a/quotes",
+          "path": "/api/sales/leads/lead-3c86d5590472/quotes",
           "status": 200,
-          "ms": 1.1,
-          "body": "{\"quote_id\":\"quote-60f60cc930f8\",\"monthly_cents\":1200000,\"discount_bps\":9500,\"net_monthly_cents\":1140000,\"status\":\"approved\",\"lead_status\":\"quoted\"}"
+          "ms": 1.2,
+          "body": "{\"quote_id\":\"quote-0814fba79993\",\"monthly_cents\":1200000,\"discount_bps\":9500,\"net_monthly_cents\":1140000,\"status\":\"approved\",\"lead_status\":\"quoted\"}"
         }
       ]
     },
@@ -124,7 +124,7 @@
           "path": "/api/contracts/esign",
           "status": 200,
           "ms": 1.1,
-          "body": "{\"contract_id\":\"ctr-772afb161a12\",\"status\":\"signed\",\"signed_by_applicant\":true,\"signed_by_org\":true,\"room_id\":\"room-1201\",\"room_status\":\"rented\",\"lead_status\":\"rented\"}"
+          "body": "{\"contract_id\":\"ctr-3d220c1ec846\",\"status\":\"signed\",\"signed_by_applicant\":true,\"signed_by_org\":true,\"room_id\":\"room-1201\",\"room_status\":\"rented\",\"lead_status\":\"rented\"}"
         }
       ]
     },
@@ -132,14 +132,14 @@
       "index": 9,
       "name": "房态变为已租",
       "status": "passed",
-      "duration_ms": 1.1,
+      "duration_ms": 1.0,
       "trace": [
         {
           "method": "GET",
           "path": "/api/site/rooms/room-1201",
           "status": 200,
           "ms": 1.0,
-          "body": "{\"id\":\"room-1201\",\"run_id\":\"seed\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T11:24:54.844+00:00\",\"created_by\":\"seed\",\"updated_at\":\"2026-11-22T11:24:58.765+00:00\",\"deleted_at\":null,\"room_no\":\"1201\",\"status\":\"rented\",\"contract_id\":\"ctr-772afb161a12\",\"lead_id\":\"lead-107b4539f09a\",\"lease_run_id\":\"run-20261122192457-ee88be\"}"
+          "body": "{\"id\":\"room-1201\",\"run_id\":\"seed\",\"org_id\":\"org-demo\",\"site_id\":\"site-hongqiao\",\"created_at\":\"2026-11-22T13:51:46.485+00:00\",\"created_by\":\"seed\",\"updated_at\":\"2026-11-22T13:51:51.301+00:00\",\"deleted_at\":null,\"room_no\":\"1201\",\"status\":\"rented\",\"contract_id\":\"ctr-3d220c1ec846\",\"lead_id\":\"lead-3c86d5590472\",\"lease_run_id\":\"run-20261122215150-92d7c6\"}"
         }
       ]
     },
@@ -154,7 +154,7 @@
           "path": "/api/ops/handovers",
           "status": 200,
           "ms": 1.1,
-          "body": "{\"handover_id\":\"hnd-f80d925e7146\",\"status\":\"claimed\",\"lead_status\":\"handover_claimed\"}"
+          "body": "{\"handover_id\":\"hnd-fe4ac9bdb840\",\"status\":\"claimed\",\"lead_status\":\"handover_claimed\"}"
         }
       ]
     },
@@ -183,22 +183,22 @@
       "asserted": "skipped by marker"
     }
   ],
-  "total_ms": 829.4,
-  "finished_at": "2026-11-22T11:24:58+00:00",
+  "total_ms": 903.2,
+  "finished_at": "2026-11-22T13:51:51+00:00",
   "data_ids": {
-    "run_id": "run-20261122192457-ee88be",
-    "application_id": "app-1c4bef87e06a",
-    "lead_id": "lead-107b4539f09a",
+    "run_id": "run-20261122215150-92d7c6",
+    "application_id": "app-251b5f197734",
+    "lead_id": "lead-3c86d5590472",
     "assigned_to": "sp-bob",
-    "visit_id": "visit-657f9820f199",
-    "checked_in_visit_id": "visit-657f9820f199",
-    "quote_id": "quote-60f60cc930f8",
-    "contract_id": "ctr-772afb161a12",
+    "visit_id": "visit-ea745dd045c3",
+    "checked_in_visit_id": "visit-ea745dd045c3",
+    "quote_id": "quote-0814fba79993",
+    "contract_id": "ctr-3d220c1ec846",
     "room_id": "room-1201",
-    "handover_id": "hnd-f80d925e7146"
+    "handover_id": "hnd-fe4ac9bdb840"
   },
   "cleanup": {
-    "run_id": "run-20261122192457-ee88be",
+    "run_id": "run-20261122215150-92d7c6",
     "removed": {
       "applications": 1,
       "leads": 1,
@@ -223,7 +223,7 @@
     "total_remaining": 0
   },
   "counts_after_cleanup": {
-    "run_id": "run-20261122192457-ee88be",
+    "run_id": "run-20261122215150-92d7c6",
     "counts": {
       "applications": 0,
       "leads": 0,
