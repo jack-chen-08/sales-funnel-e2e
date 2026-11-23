@@ -1,0 +1,45 @@
+{
+  "step": "线索按规则分配",
+  "run_id": "smk-reject-20261124-033728-deb2",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/rooms/provision",
+      "request": {
+        "room_count": 2
+      },
+      "status": 200,
+      "response": {
+        "run_id": "smk-reject-20261124-033728-deb2",
+        "rooms": [
+          {
+            "room_id": "3bb21890-5b2e-43be-8dd7-da7c7ca04d44",
+            "room_no": "12F-1801"
+          },
+          {
+            "room_id": "6e004a84-80f6-46a3-af78-1726280a1494",
+            "room_no": "12F-1802"
+          }
+        ]
+      },
+      "elapsed_ms": 60.67
+    },
+    {
+      "method": "POST",
+      "path": "/api/leads/assign",
+      "request": {
+        "application_id": "46a6ed0d-e2e6-4c9f-a9b2-ba1aa9575bb7"
+      },
+      "status": 200,
+      "response": {
+        "step": "线索按规则分配",
+        "lead_id": "5f80fb8e-9193-4337-968f-ec2dcc99b210",
+        "advisor_id": "ADV-101",
+        "assign_rule": "region=east->ADV-101",
+        "application_status": "assigned"
+      },
+      "elapsed_ms": 13.98
+    }
+  ],
+  "ui": {}
+}

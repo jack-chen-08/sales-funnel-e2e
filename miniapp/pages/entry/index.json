@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "member-entry": "/components/member-entry/index"
+  },
+  "navigationBarTitleText": "园区会员服务"
+}

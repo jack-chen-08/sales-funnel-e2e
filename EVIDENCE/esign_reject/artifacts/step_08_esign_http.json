@@ -1,0 +1,41 @@
+{
+  "step": "电子签",
+  "run_id": "smk-reject-20261124-033728-deb2",
+  "calls": [
+    {
+      "method": "FETCH",
+      "path": "http://127.0.0.1:5601/api/esign/sign",
+      "status": 422,
+      "response": {
+        "code": "ESIGN_REJECTED",
+        "step": "电子签",
+        "step_no": 8,
+        "envelope_id": "dc28cf17-e1b7-4132-bde5-f0bf73fb8a4c",
+        "envelope_status": "rejected",
+        "reject_reason": "签约方在签署页点击拒签（电子签桩模拟）",
+        "application_status": "quoted"
+      }
+    },
+    {
+      "method": "FETCH",
+      "path": "http://127.0.0.1:5601/api/esign/sign",
+      "status": 422,
+      "response": {
+        "code": "ESIGN_REJECTED",
+        "step": "电子签",
+        "step_no": 8,
+        "envelope_id": "dc28cf17-e1b7-4132-bde5-f0bf73fb8a4c",
+        "envelope_status": "rejected",
+        "reject_reason": "签约方在签署页点击拒签（电子签桩模拟）",
+        "application_status": "quoted"
+      }
+    }
+  ],
+  "ui": {
+    "console": [
+      "error: Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+    ],
+    "screenshot": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_failure.png",
+    "html": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_failure.html"
+  }
+}

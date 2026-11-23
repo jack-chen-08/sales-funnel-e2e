@@ -1,0 +1,17 @@
+<!--
+  会员入会入口页：承载 member-entry 组件。
+  真机进入方式（模拟链路第 11 步起点）：
+    /pages/entry/index?member_id=<会员ID>&run_id=<本次冒烟 run_id>
+  两个参数均由平台侧「会员经理领取交接」后的会员档案提供。
+-->
+<member-entry
+  base-url="{{baseUrl}}"
+  member-id="{{memberId}}"
+  run-id="{{runId}}"
+  phone="{{phone}}"
+  company="{{company}}"
+  contact="{{contact}}"
+  bind:certified="onCertified"
+  bind:home-ready="onHomeReady"
+  bind:failed="onFailed"
+/>

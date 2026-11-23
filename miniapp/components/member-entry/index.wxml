@@ -1,0 +1,64 @@
+<!--
+  会员入会两步交互组件。
+  第 11 步：企业联系人认证（短信验证码）；
+  第 12 步：进入首页领取首月资源推荐。
+
+  该组件同时被 pages/entry/index 页面使用（真机），
+  也可被 Node 端小程序模拟器单独加载（自动化执行）。
+-->
+<view class="entry">
+  <view class="hd">
+    <text class="brand">{{brand}}</text>
+    <text class="subtle">园区会员服务</text>
+  </view>
+
+  <view class="phase" data-phase="{{phase}}">当前阶段：{{phaseLabel}}</view>
+
+  <view class="who" wx:if="{{memberId}}">
+    <text class="who-label">会员</text>
+    <text class="who-value">{{company}} / {{contact}}</text>
+  </view>
+
+  <!-- 第 11 步：认证 -->
+  <view class="card certify" wx:if="{{phase === 'idle' || phase === 'certifying' || phase === 'error'}}">
+    <view class="card-title">第 11 步 · 企业联系人认证</view>
+    <view class="field">
+      <text class="field-label">手机号</text>
+      <text class="field-value phone-value">{{phone}}</text>
+    </view>
+    <view class="field">
+      <text class="field-label">验证码</text>
+      <input class="code-input" type="number" maxlength="6" value="{{verifyCode}}"
+             placeholder="6 位短信验证码" bindinput="onCodeInput" />
+    </view>
+    <button class="btn certify-btn" loading="{{phase === 'certifying'}}" bindtap="onCertify">提交认证</button>
+    <view class="error" wx:if="{{errorMsg}}">{{errorMsg}}</view>
+  </view>
+
+  <!-- 认证结果 -->
+  <view class="card certified" wx:if="{{phase === 'certified' || phase === 'loading_home' || phase === 'home'}}">
+    <view class="card-title">认证结果</view>
+    <view class="row"><text class="k">认证状态</text><text class="v certify-status">{{certifyStatus}}</text></view>
+    <view class="row"><text class="k">渠道</text><text class="v channel">{{channel}}</text></view>
+    <view class="row"><text class="k">openid</text><text class="v openid">{{openidStub}}</text></view>
+    <button class="btn home-btn" loading="{{phase === 'loading_home'}}"
+            wx:if="{{phase !== 'home'}}" bindtap="onEnterHome">进入首页领取首月资源</button>
+  </view>
+
+  <!-- 第 12 步：首页首月资源推荐 -->
+  <view class="card home" wx:if="{{phase === 'home'}}">
+    <view class="card-title">第 12 步 · {{headline}}</view>
+    <view class="month" data-month="{{month}}">资源月份：{{month}}</view>
+    <view class="item resource-item" wx:for="{{items}}" wx:key="code"
+          data-code="{{item.code}}" data-quota="{{item.quota}}">
+      <text class="item-name">{{item.name}}</text>
+      <text class="item-quota">配额 {{item.quota}}{{item.unit}}</text>
+    </view>
+    <view class="item-count" data-count="{{items.length}}">共 {{items.length}} 项资源</view>
+  </view>
+
+  <view class="evlog" wx:if="{{events.length}}">
+    <text class="evlog-title">交互事件（{{events.length}}）</text>
+    <text class="evlog-item" wx:for="{{events}}" wx:key="seq">{{item.seq}}.{{item.name}}</text>
+  </view>
+</view>

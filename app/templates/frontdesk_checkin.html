@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card">
+  <h1>前台 · 访客码核销</h1>
+  <div class="row"><span>到访企业</span><strong>星澜数字科技（虚构）</strong></div>
+  <div class="row"><span>预约到访码</span><code id="visit-code-display">{{ visit_code }}</code></div>
+  <label>输入访客码
+    <input id="visit-code" maxlength="6" inputmode="numeric" autocomplete="off" aria-label="6 位数字访客码" value="{{ visit_code }}" />
+  </label>
+  <p class="hint">访客码为 6 位数字，与上方预约到访码一致。</p>
+  <label>接待台
+    <select id="desk">
+      <option value="A 座前台" selected>A 座前台</option>
+      <option value="B 座前台">B 座前台</option>
+    </select>
+  </label>
+  <button id="btn-checkin" data-run-id="{{ run_id }}">核销访客码</button>
+  <p id="checkin-result" class="hint"></p>
+</section>
+<script>
+  const btn = document.getElementById('btn-checkin');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const res = await fetch('/api/visits/checkin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Run-Id': btn.dataset.runId },
+      body: JSON.stringify({ code: document.getElementById('visit-code').value.trim(), desk: document.getElementById('desk').value })
+    });
+    const body = await res.json();
+    const out = document.getElementById('checkin-result');
+    if (res.ok) {
+      out.className = 'ok';
+      out.textContent = '核销成功，到访时间 ' + body.checked_in_at;
+      out.dataset.status = body.status;
+    } else {
+      out.className = 'error';
+      out.textContent = '核销失败：' + JSON.stringify(body.detail || body);
+    }
+  });
+</script>
+{% endblock %}

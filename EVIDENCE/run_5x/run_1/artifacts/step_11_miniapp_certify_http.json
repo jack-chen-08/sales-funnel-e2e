@@ -1,0 +1,60 @@
+{
+  "step": "签约企业联系人在小程序完成认证",
+  "run_id": "smk-5x-r1-20261124-033650-4ec2",
+  "calls": [
+    {
+      "source": "miniapp",
+      "method": "POST",
+      "path": "/api/miniapp/certify",
+      "status": 200,
+      "response": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified"
+      },
+      "duration_ms": 20
+    },
+    {
+      "source": "miniapp",
+      "method": "GET",
+      "path": "/api/miniapp/home?member_id=f5488d22-49da-424f-b34e-d13da85d339d",
+      "status": 200,
+      "response": {
+        "step": "小程序首页看到首月资源推荐",
+        "recommendation_id": "d882e997-9b44-43e5-af97-b9ea2bd1c17f",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "month": "2026-11",
+        "headline": "2026-11 首月资源包",
+        "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PRINT-500",
+            "name": "黑白打印 500 页",
+            "quota": 500,
+            "unit": "页",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-LOUNGE-8",
+            "name": "洽谈区使用 8 次",
+            "quota": 8,
+            "unit": "次",
+            "source": "miniprogram-stub"
+          }
+        ],
+        "application_status": "activated"
+      },
+      "duration_ms": 12
+    }
+  ],
+  "ui": {}
+}

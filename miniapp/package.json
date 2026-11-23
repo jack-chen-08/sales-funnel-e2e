@@ -1,0 +1,13 @@
+{
+  "name": "member-recruitment-miniapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "会员入会链路小程序端（认证 + 首月资源推荐）。devDependencies 仅用于 Node 端自动化执行，不影响小程序运行。",
+  "scripts": {
+    "smoke": "node ../scripts/miniapp_smoke.js"
+  },
+  "devDependencies": {
+    "jsdom-global": "^3.0.2",
+    "miniprogram-simulate": "^1.6.1"
+  }
+}

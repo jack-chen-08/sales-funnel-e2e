@@ -1,0 +1,13 @@
+{
+  "pages": [
+    "pages/entry/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "园区会员服务",
+    "navigationBarBackgroundColor": "#1f6feb",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f7fa"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card">
+  <h1>电子签签约台</h1>
+  <div class="row"><span>信封编号</span><code id="envelope-no">{{ envelope_no }}</code></div>
+  <div class="row"><span>签署状态</span><span class="badge" id="sign-status" data-status="pending">待签署</span></div>
+  <ul id="signer-list" style="font-size:13px;color:#52606d;padding-left:18px">
+    {% for s in signers %}
+    <li data-party="{{ s.party }}">{{ s.name }} —— {{ '已签' if s.result == 'signed' else '待签' }}</li>
+    {% endfor %}
+  </ul>
+  <p class="hint">桩实现：出租方与承租方两方签署，签署结果由电子签桩返回。</p>
+  <button id="btn-sign-all" data-run-id="{{ run_id }}" data-envelope-id="{{ envelope_id }}">双方签署</button>
+  <p id="sign-result" class="hint"></p>
+  <p id="sign-error" class="error" hidden></p>
+</section>
+<script>
+  const btn = document.getElementById('btn-sign-all');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const res = await fetch('/api/esign/sign', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Run-Id': btn.dataset.runId },
+      body: JSON.stringify({ envelope_id: btn.dataset.envelopeId })
+    });
+    const body = await res.json();
+    const badge = document.getElementById('sign-status');
+    const out = document.getElementById('sign-result');
+    const err = document.getElementById('sign-error');
+    if (res.ok) {
+      badge.textContent = '已完成双方签署';
+      badge.dataset.status = body.envelope_status;
+      out.className = 'ok';
+      out.textContent = '签署完成：' + body.envelope_no;
+    } else {
+      badge.textContent = '签署失败';
+      badge.dataset.status = body.envelope_status || 'rejected';
+      err.hidden = false;
+      err.textContent = '签约方拒签：' + (body.reject_reason || JSON.stringify(body));
+    }
+  });
+</script>
+{% endblock %}

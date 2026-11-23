@@ -1,0 +1,21 @@
+{
+  "step": "房态变为已租",
+  "run_id": "smk-skipmode-20261124-035339-6455",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/rooms/967729cb-8d90-4aff-bd10-ac8716a5680d/lease",
+      "request": null,
+      "status": 200,
+      "response": {
+        "step": "房态变为已租",
+        "room_id": "967729cb-8d90-4aff-bd10-ac8716a5680d",
+        "room_no": "12F-1801",
+        "room_status": "rented",
+        "application_status": "rented"
+      },
+      "elapsed_ms": 11.87
+    }
+  ],
+  "ui": {}
+}

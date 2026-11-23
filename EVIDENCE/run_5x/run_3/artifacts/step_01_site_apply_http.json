@@ -1,0 +1,24 @@
+{
+  "step": "官网提交申请",
+  "run_id": "smk-5x-r3-20261124-033700-1ab8",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/site/apply/submit",
+      "request": {
+        "run_id": "smk-5x-r3-20261124-033700-1ab8",
+        "company_name": "星澜数字科技（虚构）",
+        "applicant_name": "林知远（虚构）",
+        "applicant_phone": "13800000001",
+        "region": "east",
+        "seat_demand": 36
+      },
+      "status": 200,
+      "response": {
+        "page_url": "http://127.0.0.1:5600/site/apply/submit",
+        "content_type": "text/html; charset=utf-8"
+      }
+    }
+  ],
+  "ui": {}
+}

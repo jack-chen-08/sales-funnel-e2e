@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card">
+  <h1>云栖科创园（虚构站点）· 入会申请</h1>
+  <p class="hint">本页为冒烟环境的官网入会申请表单，全部数据为虚构数据。</p>
+  <form id="apply-form" method="post" action="/site/apply/submit">
+    <input type="hidden" name="run_id" value="{{ run_id }}" />
+    <label>企业名称
+      <input id="company_name" name="company_name" required value="星澜数字科技（虚构）" />
+    </label>
+    <label>联系人
+      <input id="applicant_name" name="applicant_name" required value="林知远（虚构）" />
+    </label>
+    <label>联系电话
+      <input id="applicant_phone" name="applicant_phone" required value="13800000001" />
+    </label>
+    <label>意向区域
+      <select id="region" name="region">
+        <option value="east" selected>东区</option>
+        <option value="south">南区</option>
+        <option value="north">北区</option>
+        <option value="west">西区</option>
+      </select>
+    </label>
+    <label>需求工位数
+      <input id="seat_demand" name="seat_demand" type="number" min="1" max="200" value="36" required />
+    </label>
+    <button id="submit-apply" type="submit">提交入会申请</button>
+  </form>
+</section>
+{% endblock %}

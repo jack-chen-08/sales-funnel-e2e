@@ -1,0 +1,439 @@
+{
+  "run_id": "smk-5x-r1-20261124-033650-4ec2",
+  "scenario": "chain",
+  "mode": "full",
+  "skip_miniprogram": false,
+  "base_url": "http://127.0.0.1:5600",
+  "started_at": "2026-11-23T19:36:50.816+00:00",
+  "finished_at": "2026-11-23T19:36:55.380+00:00",
+  "total_duration_ms": 4563.8,
+  "status": "passed",
+  "counts": {
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0
+  },
+  "failed_step": null,
+  "steps": [
+    {
+      "no": 1,
+      "key": "site_apply",
+      "name": "官网提交申请",
+      "actor": "官网访客",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:51.191+00:00",
+      "ended_at": "2026-11-23T19:36:52.047+00:00",
+      "duration_ms": 856.5,
+      "assertion": "官网提交成功，申请单状态=submitted，返回 UUID 单号",
+      "evidence": {
+        "evidence": {
+          "application_id": "9ea75949-1d50-4c8f-bdc6-99a5439ad4ca",
+          "application_status": "submitted",
+          "page_url": "http://127.0.0.1:5600/site/apply/submit"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_01_site_apply_trace.zip",
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_01_site_apply_http.json"
+      }
+    },
+    {
+      "no": 2,
+      "key": "lead_assign",
+      "name": "线索按规则分配",
+      "actor": "销售中台",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:52.111+00:00",
+      "ended_at": "2026-11-23T19:36:52.121+00:00",
+      "duration_ms": 10.3,
+      "assertion": "线索分配命中规则 region=east->ADV-101，状态 assigned",
+      "evidence": {
+        "evidence": {
+          "step": "线索按规则分配",
+          "lead_id": "dc41da85-93ed-460e-8ba5-3f119b270999",
+          "advisor_id": "ADV-101",
+          "assign_rule": "region=east->ADV-101",
+          "application_status": "assigned"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_02_lead_assign_http.json"
+      }
+    },
+    {
+      "no": 3,
+      "key": "first_contact",
+      "name": "顾问首次联系",
+      "actor": "招商顾问",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:52.121+00:00",
+      "ended_at": "2026-11-23T19:36:52.851+00:00",
+      "duration_ms": 729.9,
+      "assertion": "工作台点击后线索状态=contacted，页面回显联系记录 ID",
+      "evidence": {
+        "evidence": {
+          "badge": "已联系",
+          "contact_id": "50d4c277-68ac-4d96-9049-2500d9740892",
+          "backend_status": "contacted"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_03_first_contact_trace.zip",
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_03_first_contact_http.json"
+      }
+    },
+    {
+      "no": 4,
+      "key": "book_visit",
+      "name": "推进到预约参观",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:52.891+00:00",
+      "ended_at": "2026-11-23T19:36:52.903+00:00",
+      "duration_ms": 12.1,
+      "assertion": "预约参观创建成功，生成 6 位访客码，状态=visit_booked",
+      "evidence": {
+        "evidence": {
+          "step": "推进到预约参观",
+          "visit_id": "0d683cb7-3419-4934-bc01-cc7bbd0f120a",
+          "visit_code": "875268",
+          "scheduled_at": "2026-11-24T19:36:52.895371+00:00",
+          "application_status": "visit_booked"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_04_book_visit_http.json"
+      }
+    },
+    {
+      "no": 5,
+      "key": "visitor_checkin",
+      "name": "前台核销访客码",
+      "actor": "前台",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:52.903+00:00",
+      "ended_at": "2026-11-23T19:36:53.644+00:00",
+      "duration_ms": 740.8,
+      "assertion": "访客码在 A 座前台核销成功，状态=visited",
+      "evidence": {
+        "evidence": {
+          "page_text": "核销成功，到访时间 2026-11-23T19:36:53.593390+00:00",
+          "backend_status": "visited"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_05_visitor_checkin_trace.zip",
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_05_visitor_checkin_http.json"
+      }
+    },
+    {
+      "no": 6,
+      "key": "minutes_confirm",
+      "name": "纪要确认",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:53.686+00:00",
+      "ended_at": "2026-11-23T19:36:53.698+00:00",
+      "duration_ms": 11.8,
+      "assertion": "参观纪要确认落库，状态=minutes_confirmed",
+      "evidence": {
+        "evidence": {
+          "step": "纪要确认",
+          "minutes_id": "0e2d0c4f-5fe4-4016-8353-07803e9946e5",
+          "confirmed_at": "2026-11-23T19:36:53.691022+00:00",
+          "application_status": "minutes_confirmed"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_06_minutes_confirm_http.json"
+      }
+    },
+    {
+      "no": 7,
+      "key": "quote",
+      "name": "9.5 折以内报价",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:53.698+00:00",
+      "ended_at": "2026-11-23T19:36:53.711+00:00",
+      "duration_ms": 12.8,
+      "assertion": "成交价为挂牌价 95.0%（9.5 折以内），成交价 1767000 分，状态=quoted",
+      "evidence": {
+        "evidence": {
+          "step": "9.5 折以内报价",
+          "quote_id": "8dfb3a29-74bf-456c-bd38-50c2160a9cd6",
+          "envelope_id": "19f379fa-ccf5-4796-90d5-98748bbc80e9",
+          "room_id": "ab648b1f-51f4-490e-a08c-0f0743c6d797",
+          "list_price_cents": 1860000,
+          "discount_bp": 500,
+          "final_price_cents": 1767000,
+          "application_status": "quoted"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_07_quote_http.json"
+      }
+    },
+    {
+      "no": 8,
+      "key": "esign",
+      "name": "电子签",
+      "actor": "签约双方",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:53.711+00:00",
+      "ended_at": "2026-11-23T19:36:54.406+00:00",
+      "duration_ms": 694.2,
+      "assertion": "签约台完成两方签署（出租方+承租方），信封状态=signed，主状态=signed",
+      "evidence": {
+        "evidence": {
+          "signers": [
+            {
+              "party": "landlord",
+              "text": "园区运营主体（虚构） —— 待签"
+            },
+            {
+              "party": "tenant",
+              "text": "星澜数字科技（虚构） / 林知远（虚构） —— 待签"
+            }
+          ],
+          "envelope_status": "signed",
+          "backend_status": "signed"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_08_esign_trace.zip",
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_08_esign_http.json"
+      }
+    },
+    {
+      "no": 9,
+      "key": "room_rented",
+      "name": "房态变为已租",
+      "actor": "运营中台",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:54.446+00:00",
+      "ended_at": "2026-11-23T19:36:54.458+00:00",
+      "duration_ms": 11.9,
+      "assertion": "房源 12F-1801 房态=rented，主状态=rented",
+      "evidence": {
+        "evidence": {
+          "step": "房态变为已租",
+          "room_id": "ab648b1f-51f4-490e-a08c-0f0743c6d797",
+          "room_no": "12F-1801",
+          "room_status": "rented",
+          "application_status": "rented"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_09_room_rented_http.json"
+      }
+    },
+    {
+      "no": 10,
+      "key": "handover_claim",
+      "name": "会员经理领取交接",
+      "actor": "会员经理",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:54.458+00:00",
+      "ended_at": "2026-11-23T19:36:54.469+00:00",
+      "duration_ms": 11.1,
+      "assertion": "会员经理 MM-021 领取交接，会员档案创建，状态=handed_over",
+      "evidence": {
+        "evidence": {
+          "step": "会员经理领取交接",
+          "handover_id": "5efa3e4a-f160-494d-ab2b-0136388c50a0",
+          "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+          "from_advisor_id": "ADV-101",
+          "to_member_manager_id": "MM-021",
+          "application_status": "handed_over"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_10_handover_claim_http.json"
+      }
+    },
+    {
+      "no": 11,
+      "key": "miniapp_certify",
+      "name": "签约企业联系人在小程序完成认证",
+      "actor": "企业联系人",
+      "mode": "miniapp",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:54.469+00:00",
+      "ended_at": "2026-11-23T19:36:55.380+00:00",
+      "duration_ms": 910.4,
+      "assertion": "小程序内提交验证码完成企业联系人认证：POST /api/miniapp/certify → 200（20ms），组件 phase=idle→certified，触发 certified 事件，状态=certified",
+      "evidence": {
+        "evidence": {
+          "executor": "miniprogram-simulate",
+          "executor_note": "Node 端微信官方小程序模拟器；真实渲染树 + 真实事件 + 真实 HTTP 出网。非真机、无像素截图、无微信登录态。",
+          "request": {
+            "method": "POST",
+            "path": "/api/miniapp/certify",
+            "statusCode": 200,
+            "durationMs": 20
+          },
+          "response": {
+            "step": "签约企业联系人在小程序完成认证",
+            "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+            "certify_status": "certified",
+            "openid_stub": "wx_stub_96b7717fe29b",
+            "channel": "miniprogram-stub",
+            "application_status": "certified"
+          },
+          "component_phase": "certified",
+          "dom_sha256": "e1fffa1d69bd166b76671580a8393585158f2eb75570e6deddcc1488b34561f7",
+          "events": [
+            "certified",
+            "home-ready"
+          ],
+          "assertions_total": 21
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_11_miniapp_certify_http.json",
+        "miniapp_trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/trace.json",
+        "miniapp_summary": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/summary.md",
+        "miniapp_requests": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/requests.jsonl",
+        "render_initial": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/01_initial_render.html",
+        "render_after_certify": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/02_after_certify.html",
+        "render_after_home": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/03_after_home.html"
+      }
+    },
+    {
+      "no": 12,
+      "key": "miniapp_home",
+      "name": "小程序首页看到首月资源推荐",
+      "actor": "企业联系人",
+      "mode": "miniapp",
+      "status": "passed",
+      "started_at": "2026-11-23T19:36:55.380+00:00",
+      "ended_at": "2026-11-23T19:36:55.380+00:00",
+      "duration_ms": 0.0,
+      "assertion": "小程序首页渲染 2026-11 首月资源包 3 项（渲染树条目数与数据一致），GET /api/miniapp/home → 200（12ms），链路状态=activated",
+      "evidence": {
+        "evidence": {
+          "executor": "miniprogram-simulate",
+          "executor_note": "Node 端微信官方小程序模拟器；真实渲染树 + 真实事件 + 真实 HTTP 出网。非真机、无像素截图、无微信登录态。",
+          "request": {
+            "method": "GET",
+            "path": "/api/miniapp/home?member_id=f5488d22-49da-424f-b34e-d13da85d339d",
+            "statusCode": 200,
+            "durationMs": 12
+          },
+          "response": {
+            "step": "小程序首页看到首月资源推荐",
+            "recommendation_id": "d882e997-9b44-43e5-af97-b9ea2bd1c17f",
+            "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+            "month": "2026-11",
+            "headline": "2026-11 首月资源包",
+            "items": [
+              {
+                "code": "RES-MEETING-4",
+                "name": "共享会议室 4 小时",
+                "quota": 4,
+                "unit": "小时",
+                "source": "miniprogram-stub"
+              },
+              {
+                "code": "RES-PRINT-500",
+                "name": "黑白打印 500 页",
+                "quota": 500,
+                "unit": "页",
+                "source": "miniprogram-stub"
+              },
+              {
+                "code": "RES-LOUNGE-8",
+                "name": "洽谈区使用 8 次",
+                "quota": 8,
+                "unit": "次",
+                "source": "miniprogram-stub"
+              }
+            ],
+            "application_status": "activated"
+          },
+          "component_phase": "home",
+          "dom_sha256": "6edbea190f2505252f96b69f451d9cfbccdd4948591c2d8036713e34712f3c79",
+          "events": [
+            "certified",
+            "home-ready"
+          ]
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/step_12_miniapp_home_http.json",
+        "miniapp_trace": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/trace.json",
+        "miniapp_summary": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/summary.md",
+        "miniapp_requests": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/requests.jsonl",
+        "render_initial": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/01_initial_render.html",
+        "render_after_certify": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/02_after_certify.html",
+        "render_after_home": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2/miniapp/03_after_home.html"
+      }
+    }
+  ],
+  "created_ids": {
+    "rooms": "ab648b1f-51f4-490e-a08c-0f0743c6d797,45337764-bd32-4d99-a8cf-095187e0bd21",
+    "room_primary": "ab648b1f-51f4-490e-a08c-0f0743c6d797",
+    "room_secondary": "45337764-bd32-4d99-a8cf-095187e0bd21",
+    "application_id": "9ea75949-1d50-4c8f-bdc6-99a5439ad4ca",
+    "lead_id": "dc41da85-93ed-460e-8ba5-3f119b270999",
+    "advisor_id": "ADV-101",
+    "contact_id": "50d4c277-68ac-4d96-9049-2500d9740892",
+    "visit_id": "0d683cb7-3419-4934-bc01-cc7bbd0f120a",
+    "visit_code": "875268",
+    "minutes_id": "0e2d0c4f-5fe4-4016-8353-07803e9946e5",
+    "quote_id": "8dfb3a29-74bf-456c-bd38-50c2160a9cd6",
+    "envelope_id": "19f379fa-ccf5-4796-90d5-98748bbc80e9",
+    "handover_id": "5efa3e4a-f160-494d-ab2b-0136388c50a0",
+    "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+    "recommendation_id": "d882e997-9b44-43e5-af97-b9ea2bd1c17f"
+  },
+  "cleanup": {
+    "cleaned_at": "2026-11-23T19:36:55.417+00:00",
+    "deleted": {
+      "resource_recommendations": 1,
+      "members": 1,
+      "handovers": 1,
+      "rooms": 2,
+      "esign_envelopes": 1,
+      "quotes": 1,
+      "visit_minutes": 1,
+      "visits": 1,
+      "contacts": 1,
+      "leads": 1,
+      "applications": 1,
+      "audit_events": 12
+    },
+    "deleted_total": 24,
+    "remaining": {
+      "resource_recommendations": 0,
+      "members": 0,
+      "handovers": 0,
+      "rooms": 0,
+      "esign_envelopes": 0,
+      "quotes": 0,
+      "visit_minutes": 0,
+      "visits": 0,
+      "contacts": 0,
+      "leads": 0,
+      "applications": 0,
+      "audit_events": 0
+    },
+    "remaining_total": 0
+  },
+  "artifacts": {
+    "artifacts_dir": "reports/artifacts/smk-5x-r1-20261124-033650-4ec2",
+    "report_json": "reports/run_smk-5x-r1-20261124-033650-4ec2.json",
+    "report_md": "reports/run_smk-5x-r1-20261124-033650-4ec2.md"
+  }
+}

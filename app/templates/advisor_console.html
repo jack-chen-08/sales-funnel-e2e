@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card">
+  <h1>招商顾问工作台 · 线索详情</h1>
+  <div class="row"><span>企业</span><strong id="lead-company">{{ company }}</strong></div>
+  <div class="row"><span>线索编号</span><code id="lead-id">{{ lead_id }}</code></div>
+  <div class="row"><span>分配顾问</span><strong id="advisor-id">{{ advisor_id }}</strong></div>
+  <div class="row"><span>分配规则</span><span id="assign-rule">{{ rule }}</span></div>
+  <div class="row"><span>线索状态</span><span class="badge" id="lead-status" data-status="{{ status }}">{{ status_label }}</span></div>
+  <p class="hint">顾问需在 2 小时内完成首次联系，点击下方按钮即记录首次联系时间与渠道。</p>
+  <button id="btn-first-contact" data-run-id="{{ run_id }}" data-lead-id="{{ lead_id }}">记录首次联系</button>
+  <p id="contact-result" class="hint"></p>
+</section>
+<script>
+  const btn = document.getElementById('btn-first-contact');
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const res = await fetch('/api/contacts/first', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Run-Id': btn.dataset.runId },
+      body: JSON.stringify({ lead_id: btn.dataset.leadId, channel: 'phone', note: '首次电话联系，确认选址需求' })
+    });
+    const body = await res.json();
+    const badge = document.getElementById('lead-status');
+    const out = document.getElementById('contact-result');
+    if (res.ok) {
+      badge.textContent = '已联系';
+      badge.dataset.status = body.application_status;
+      out.className = 'ok';
+      out.textContent = '首次联系已记录：' + body.contact_id;
+    } else {
+      out.className = 'error';
+      out.textContent = '记录失败：' + JSON.stringify(body.detail || body);
+    }
+  });
+</script>
+{% endblock %}

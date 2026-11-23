@@ -1,0 +1,288 @@
+{
+  "tool": "miniprogram-simulate",
+  "note": "Node 端微信官方小程序模拟器；真实渲染树 + 真实事件 + 真实 HTTP 出网。非真机、无像素截图、无微信登录态。",
+  "startedAt": "2026-11-23T19:36:55.143Z",
+  "endedAt": "2026-11-23T19:36:55.365Z",
+  "baseUrl": "http://127.0.0.1:5600",
+  "memberId": "f5488d22-49da-424f-b34e-d13da85d339d",
+  "runId": "smk-5x-r1-20261124-033650-4ec2",
+  "verifyCode": "123456",
+  "steps": [
+    {
+      "stage": "initial",
+      "phase": "idle",
+      "domSha256": "4ced3a671a762587466fbc00653575b04b94eb1fecc2d2e193c9821e4ff01eab",
+      "domBytes": 962
+    },
+    {
+      "stage": "certify",
+      "phase": "certified",
+      "domSha256": "e1fffa1d69bd166b76671580a8393585158f2eb75570e6deddcc1488b34561f7",
+      "domBytes": 1309
+    },
+    {
+      "stage": "home",
+      "phase": "home",
+      "domSha256": "6edbea190f2505252f96b69f451d9cfbccdd4948591c2d8036713e34712f3c79",
+      "domBytes": 2285
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "name": "certified",
+      "detail": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified"
+      }
+    },
+    {
+      "seq": 2,
+      "name": "home-ready",
+      "detail": {
+        "step": "小程序首页看到首月资源推荐",
+        "recommendation_id": "d882e997-9b44-43e5-af97-b9ea2bd1c17f",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "month": "2026-11",
+        "headline": "2026-11 首月资源包",
+        "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PRINT-500",
+            "name": "黑白打印 500 页",
+            "quota": 500,
+            "unit": "页",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-LOUNGE-8",
+            "name": "洽谈区使用 8 次",
+            "quota": 8,
+            "unit": "次",
+            "source": "miniprogram-stub"
+          }
+        ],
+        "application_status": "activated"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "seq": 1,
+      "at": "2026-11-23T19:36:55.267Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:5600/api/miniapp/certify",
+      "path": "/api/miniapp/certify",
+      "requestHeaders": {
+        "content-type": "application/json",
+        "x-run-id": "smk-5x-r1-20261124-033650-4ec2"
+      },
+      "requestBody": {
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "verify_code": "123456"
+      },
+      "statusCode": 200,
+      "responseBody": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified"
+      },
+      "durationMs": 20
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-23T19:36:55.317Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:5600/api/miniapp/home?member_id=f5488d22-49da-424f-b34e-d13da85d339d",
+      "path": "/api/miniapp/home?member_id=f5488d22-49da-424f-b34e-d13da85d339d",
+      "requestHeaders": {
+        "content-type": "application/json",
+        "x-run-id": "smk-5x-r1-20261124-033650-4ec2"
+      },
+      "requestBody": null,
+      "statusCode": 200,
+      "responseBody": {
+        "step": "小程序首页看到首月资源推荐",
+        "recommendation_id": "d882e997-9b44-43e5-af97-b9ea2bd1c17f",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "month": "2026-11",
+        "headline": "2026-11 首月资源包",
+        "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PRINT-500",
+            "name": "黑白打印 500 页",
+            "quota": 500,
+            "unit": "页",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-LOUNGE-8",
+            "name": "洽谈区使用 8 次",
+            "quota": 8,
+            "unit": "次",
+            "source": "miniprogram-stub"
+          }
+        ],
+        "application_status": "activated"
+      },
+      "durationMs": 12
+    }
+  ],
+  "assertions": [
+    {
+      "name": "初始渲染出现「第 11 步 · 企业联系人认证」标题",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "初始渲染阶段为待认证（phase=idle）",
+      "ok": true,
+      "detail": "idle"
+    },
+    {
+      "name": "找到验证码输入框 .code-input",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "找到「提交认证」按钮 .certify-btn",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "第 11 步向平台发起真实 HTTP 请求 POST /api/miniapp/certify",
+      "ok": true,
+      "detail": "/api/miniapp/certify"
+    },
+    {
+      "name": "认证请求带 x-run-id 头（run 数据隔离）",
+      "ok": true,
+      "detail": {
+        "content-type": "application/json",
+        "x-run-id": "smk-5x-r1-20261124-033650-4ec2"
+      }
+    },
+    {
+      "name": "认证接口返回 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "认证接口返回 certify_status=certified",
+      "ok": true,
+      "detail": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "f5488d22-49da-424f-b34e-d13da85d339d",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified"
+      }
+    },
+    {
+      "name": "组件阶段切换为已认证（phase=certified）",
+      "ok": true,
+      "detail": "certified"
+    },
+    {
+      "name": "渲染树显示认证状态 certified",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "组件触发 certified 事件",
+      "ok": true,
+      "detail": [
+        "certified"
+      ]
+    },
+    {
+      "name": "找到「进入首页」按钮 .home-btn",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "第 12 步向平台发起真实 HTTP 请求 GET /api/miniapp/home",
+      "ok": true,
+      "detail": "/api/miniapp/home?member_id=f5488d22-49da-424f-b34e-d13da85d339d"
+    },
+    {
+      "name": "首页接口返回 200",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "组件阶段切换为已进入首页（phase=home）",
+      "ok": true,
+      "detail": "home"
+    },
+    {
+      "name": "首月资源条目不少于 3 项",
+      "ok": true,
+      "detail": 3
+    },
+    {
+      "name": "每条资源配额为正数",
+      "ok": true,
+      "detail": [
+        4,
+        500,
+        8
+      ]
+    },
+    {
+      "name": "资源月份与接口返回一致",
+      "ok": true,
+      "detail": {
+        "dom": "2026-11",
+        "api": "2026-11"
+      }
+    },
+    {
+      "name": "渲染树中资源条目数量与数据一致",
+      "ok": true,
+      "detail": {
+        "rendered": 3,
+        "data": 3
+      }
+    },
+    {
+      "name": "渲染树包含资源月份与条目数文案",
+      "ok": true,
+      "detail": {
+        "month": "2026-11",
+        "count": 3
+      }
+    },
+    {
+      "name": "组件触发 home-ready 事件",
+      "ok": true,
+      "detail": [
+        "certified",
+        "home-ready"
+      ]
+    }
+  ],
+  "result": "passed",
+  "failedAssertions": []
+}

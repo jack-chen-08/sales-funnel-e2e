@@ -1,0 +1,45 @@
+{
+  "step": "线索按规则分配",
+  "run_id": "smk-skipmode-20261124-035339-6455",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/rooms/provision",
+      "request": {
+        "room_count": 2
+      },
+      "status": 200,
+      "response": {
+        "run_id": "smk-skipmode-20261124-035339-6455",
+        "rooms": [
+          {
+            "room_id": "967729cb-8d90-4aff-bd10-ac8716a5680d",
+            "room_no": "12F-1801"
+          },
+          {
+            "room_id": "278acfe9-e6be-4998-8eaf-99ddd6be399e",
+            "room_no": "12F-1802"
+          }
+        ]
+      },
+      "elapsed_ms": 19.65
+    },
+    {
+      "method": "POST",
+      "path": "/api/leads/assign",
+      "request": {
+        "application_id": "17c3eabe-99c7-4789-bccb-cfcc5afe9041"
+      },
+      "status": 200,
+      "response": {
+        "step": "线索按规则分配",
+        "lead_id": "4961037a-8da3-4f2e-99a1-5fd1a5a846fb",
+        "advisor_id": "ADV-101",
+        "assign_rule": "region=east->ADV-101",
+        "application_status": "assigned"
+      },
+      "elapsed_ms": 10.05
+    }
+  ],
+  "ui": {}
+}

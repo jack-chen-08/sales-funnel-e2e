@@ -1,0 +1,61 @@
+{
+  "step": "顾问首次联系",
+  "run_id": "smk-5x-r3-20261124-033700-1ab8",
+  "calls": [
+    {
+      "method": "FETCH",
+      "path": "http://127.0.0.1:5600/api/contacts/first",
+      "status": 200,
+      "response": {
+        "step": "顾问首次联系",
+        "contact_id": "ee92e8e2-fd68-4458-b020-06a025a0f8ef",
+        "contacted_at": "2026-11-23T19:37:02.726367+00:00",
+        "application_status": "contacted"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/run/smk-5x-r3-20261124-033700-1ab8/state",
+      "request": null,
+      "status": 200,
+      "response": {
+        "run_id": "smk-5x-r3-20261124-033700-1ab8",
+        "application_id": "8ec5b029-c855-4a31-bfac-6a430b98c495",
+        "status": "contacted",
+        "company_name": "星澜数字科技（虚构）",
+        "events": [
+          {
+            "step_no": 1,
+            "step_key": "site_apply",
+            "event": "site_apply:ok",
+            "payload": {
+              "application_id": "8ec5b029-c855-4a31-bfac-6a430b98c495",
+              "company_name": "星澜数字科技（虚构）"
+            }
+          },
+          {
+            "step_no": 2,
+            "step_key": "lead_assign",
+            "event": "lead_assign:ok",
+            "payload": {
+              "lead_id": "678f2b08-3463-4ab9-8697-780342c3f633",
+              "advisor_id": "ADV-101",
+              "rule": "region=east->ADV-101"
+            }
+          },
+          {
+            "step_no": 3,
+            "step_key": "first_contact",
+            "event": "first_contact:ok",
+            "payload": {
+              "contact_id": "ee92e8e2-fd68-4458-b020-06a025a0f8ef",
+              "channel": "phone"
+            }
+          }
+        ]
+      },
+      "elapsed_ms": 5.5
+    }
+  ],
+  "ui": {}
+}

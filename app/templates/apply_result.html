@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+<section class="card">
+  <h1>入会申请已提交</h1>
+  <div id="apply-result" data-app-id="{{ application_id }}" data-app-status="{{ status }}" data-run-id="{{ run_id }}">
+    <p>申请单号：<code id="application-id">{{ application_id }}</code></p>
+    <p>企业名称：{{ company }}</p>
+    <p>当前状态：<strong id="apply-status">{{ status }}</strong></p>
+  </div>
+  <p class="hint">后续步骤由招商中台继续推进。</p>
+</section>
+{% endblock %}

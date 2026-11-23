@@ -1,0 +1,81 @@
+{
+  "step": "前台核销访客码",
+  "run_id": "smk-skipmode-20261124-035335-043d",
+  "calls": [
+    {
+      "method": "FETCH",
+      "path": "http://127.0.0.1:5600/api/visits/checkin",
+      "status": 200,
+      "response": {
+        "step": "前台核销访客码",
+        "visit_id": "cb99a88a-7ef5-4418-8005-2032c4e31a5a",
+        "status": "checked_in",
+        "checked_in_at": "2026-11-23T19:53:38.387877+00:00",
+        "desk": "A 座前台",
+        "application_status": "visited"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/run/smk-skipmode-20261124-035335-043d/state",
+      "request": null,
+      "status": 200,
+      "response": {
+        "run_id": "smk-skipmode-20261124-035335-043d",
+        "application_id": "0abb9691-853c-4d10-bfd9-892fe2d250e8",
+        "status": "visited",
+        "company_name": "星澜数字科技（虚构）",
+        "events": [
+          {
+            "step_no": 1,
+            "step_key": "site_apply",
+            "event": "site_apply:ok",
+            "payload": {
+              "application_id": "0abb9691-853c-4d10-bfd9-892fe2d250e8",
+              "company_name": "星澜数字科技（虚构）"
+            }
+          },
+          {
+            "step_no": 2,
+            "step_key": "lead_assign",
+            "event": "lead_assign:ok",
+            "payload": {
+              "lead_id": "58cc5c36-3e65-40eb-8de3-f8ac85ab1542",
+              "advisor_id": "ADV-101",
+              "rule": "region=east->ADV-101"
+            }
+          },
+          {
+            "step_no": 3,
+            "step_key": "first_contact",
+            "event": "first_contact:ok",
+            "payload": {
+              "contact_id": "412ce6e8-1c0f-445e-8464-4cbf55db70f8",
+              "channel": "phone"
+            }
+          },
+          {
+            "step_no": 4,
+            "step_key": "book_visit",
+            "event": "book_visit:ok",
+            "payload": {
+              "visit_id": "cb99a88a-7ef5-4418-8005-2032c4e31a5a",
+              "visit_code": "429051"
+            }
+          },
+          {
+            "step_no": 5,
+            "step_key": "visitor_checkin",
+            "event": "visitor_checkin:ok",
+            "payload": {
+              "visit_id": "cb99a88a-7ef5-4418-8005-2032c4e31a5a",
+              "desk": "A 座前台"
+            }
+          }
+        ]
+      },
+      "elapsed_ms": 5.36
+    }
+  ],
+  "ui": {}
+}

@@ -1,0 +1,60 @@
+{
+  "step": "签约企业联系人在小程序完成认证",
+  "run_id": "smk-5x-r3-20261124-033700-1ab8",
+  "calls": [
+    {
+      "source": "miniapp",
+      "method": "POST",
+      "path": "/api/miniapp/certify",
+      "status": 200,
+      "response": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "a4816916-a86b-466b-96d3-a94c3bd8baab",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified"
+      },
+      "duration_ms": 19
+    },
+    {
+      "source": "miniapp",
+      "method": "GET",
+      "path": "/api/miniapp/home?member_id=a4816916-a86b-466b-96d3-a94c3bd8baab",
+      "status": 200,
+      "response": {
+        "step": "小程序首页看到首月资源推荐",
+        "recommendation_id": "d32d7b71-0bc6-4dea-ae47-52e4167b1ed3",
+        "member_id": "a4816916-a86b-466b-96d3-a94c3bd8baab",
+        "month": "2026-11",
+        "headline": "2026-11 首月资源包",
+        "items": [
+          {
+            "code": "RES-PRINT-500",
+            "name": "黑白打印 500 页",
+            "quota": 500,
+            "unit": "页",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PARK-2",
+            "name": "固定车位 2 个",
+            "quota": 2,
+            "unit": "个",
+            "source": "miniprogram-stub"
+          }
+        ],
+        "application_status": "activated"
+      },
+      "duration_ms": 12
+    }
+  ],
+  "ui": {}
+}

@@ -1,0 +1,123 @@
+{
+  "step": "电子签",
+  "run_id": "smk-5x-r5-20261124-033710-2a82",
+  "calls": [
+    {
+      "method": "FETCH",
+      "path": "http://127.0.0.1:5600/api/esign/sign",
+      "status": 200,
+      "response": {
+        "step": "电子签",
+        "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa",
+        "envelope_no": "ESN-B89CE0A34F",
+        "envelope_status": "signed",
+        "signers": [
+          {
+            "party": "landlord",
+            "name": "园区运营主体（虚构）",
+            "signed_at": "2026-11-23T19:37:14.175928+00:00",
+            "result": "signed"
+          },
+          {
+            "party": "tenant",
+            "name": "星澜数字科技（虚构） / 林知远（虚构）",
+            "signed_at": "2026-11-23T19:37:14.175928+00:00",
+            "result": "signed"
+          }
+        ],
+        "application_status": "signed"
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/run/smk-5x-r5-20261124-033710-2a82/state",
+      "request": null,
+      "status": 200,
+      "response": {
+        "run_id": "smk-5x-r5-20261124-033710-2a82",
+        "application_id": "7dc64ce6-5552-4ad5-8c34-4af070af2554",
+        "status": "signed",
+        "company_name": "星澜数字科技（虚构）",
+        "events": [
+          {
+            "step_no": 1,
+            "step_key": "site_apply",
+            "event": "site_apply:ok",
+            "payload": {
+              "application_id": "7dc64ce6-5552-4ad5-8c34-4af070af2554",
+              "company_name": "星澜数字科技（虚构）"
+            }
+          },
+          {
+            "step_no": 2,
+            "step_key": "lead_assign",
+            "event": "lead_assign:ok",
+            "payload": {
+              "lead_id": "c77f651f-0eb9-44af-96d9-7ce882bb1803",
+              "advisor_id": "ADV-101",
+              "rule": "region=east->ADV-101"
+            }
+          },
+          {
+            "step_no": 3,
+            "step_key": "first_contact",
+            "event": "first_contact:ok",
+            "payload": {
+              "contact_id": "a975594d-5dd9-46c5-b201-d809636d6318",
+              "channel": "phone"
+            }
+          },
+          {
+            "step_no": 4,
+            "step_key": "book_visit",
+            "event": "book_visit:ok",
+            "payload": {
+              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2",
+              "visit_code": "621057"
+            }
+          },
+          {
+            "step_no": 5,
+            "step_key": "visitor_checkin",
+            "event": "visitor_checkin:ok",
+            "payload": {
+              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2",
+              "desk": "A 座前台"
+            }
+          },
+          {
+            "step_no": 6,
+            "step_key": "minutes_confirm",
+            "event": "minutes_confirm:ok",
+            "payload": {
+              "minutes_id": "8fed7576-0c02-490a-852a-66bb208b4617",
+              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2"
+            }
+          },
+          {
+            "step_no": 7,
+            "step_key": "quote",
+            "event": "quote:ok",
+            "payload": {
+              "quote_id": "404950d0-accc-4531-809c-d14212be0785",
+              "final_price_cents": 1767000,
+              "discount_bp": 500,
+              "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa"
+            }
+          },
+          {
+            "step_no": 8,
+            "step_key": "esign",
+            "event": "esign:ok",
+            "payload": {
+              "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa",
+              "envelope_no": "ESN-B89CE0A34F"
+            }
+          }
+        ]
+      },
+      "elapsed_ms": 33.21
+    }
+  ],
+  "ui": {}
+}

@@ -1,10 +1,14 @@
 .venv/
 __pycache__/
 *.pyc
+.env
 .pytest_cache/
-reports/last_run_pid
-# 运行时产物：每次跑测/跑链都会重新生成，不进版本库，避免 clone 后工作区变脏
-reports/_runtime/
-reports/chain_5x_run*.json
-reports/report_ac*.json
-node_modules/
+reports/*.json
+reports/*.md
+reports/artifacts/
+!reports/.gitkeep
+.platform.pid
+reports/platform*.log
+
+# 小程序自动化依赖（由 scripts/setup_miniapp.sh 安装，package-lock.json 入库保证可复现）
+miniapp/node_modules/

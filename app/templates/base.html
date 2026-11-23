@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>会员空间平台 · 招商链路冒烟</title>
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; font-family: "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif; background: #f4f6f9; color: #1f2933; }
+    header { background: #14304f; color: #fff; padding: 14px 28px; font-size: 15px; letter-spacing: .5px; }
+    header span { opacity: .75; font-size: 12px; margin-left: 12px; }
+    main { max-width: 720px; margin: 32px auto; padding: 0 16px; }
+    .card { background: #fff; border-radius: 10px; padding: 28px 32px; box-shadow: 0 6px 20px rgba(15, 35, 60, .08); }
+    h1 { font-size: 20px; margin: 0 0 18px; }
+    label { display: block; margin-bottom: 14px; font-size: 13px; color: #52606d; }
+    input, select { display: block; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 9px 11px;
+      border: 1px solid #cbd2d9; border-radius: 6px; font-size: 14px; background: #fff; }
+    button { background: #1f6feb; color: #fff; border: 0; border-radius: 6px; padding: 10px 20px;
+      font-size: 14px; cursor: pointer; }
+    button:disabled { opacity: .5; cursor: default; }
+    .hint { font-size: 12px; color: #7b8794; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; background: #e3f0ff; color: #1f6feb; font-size: 12px; }
+    .row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #e4e7eb; font-size: 14px; }
+    .error { color: #c0392b; font-weight: 600; }
+    .ok { color: #1e8449; font-weight: 600; }
+    code { background: #eef1f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+<header>会员空间平台 · 招商全链路冒烟<span>冒烟环境 / 虚构数据</span></header>
+<main>
+  {% block body %}{% endblock %}
+</main>
+</body>
+</html>

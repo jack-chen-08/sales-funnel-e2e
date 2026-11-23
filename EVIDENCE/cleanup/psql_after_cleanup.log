@@ -1,0 +1,29 @@
+== 数据库直查（psql）run_id=smk-ac3-before-20261124-033740-cc58 ==
+        table_name        | rows 
+--------------------------+------
+ applications             |    0
+ leads                    |    0
+ contacts                 |    0
+ visits                   |    0
+ visit_minutes            |    0
+ quotes                   |    0
+ esign_envelopes          |    0
+ rooms                    |    0
+ handovers                |    0
+ members                  |    0
+ resource_recommendations |    0
+ audit_events             |    0
+(12 rows)
+
+ smoke_runs_rows 
+-----------------
+               1
+(1 row)
+
+ remaining_rows_total 
+----------------------
+                    0
+(1 row)
+
+== 平台清理接口回查 ==
+{"run_id":"smk-ac3-before-20261124-033740-cc58","counts":{"resource_recommendations":0,"members":0,"handovers":0,"rooms":0,"esign_envelopes":0,"quotes":0,"visit_minutes":0,"visits":0,"contacts":0,"leads":0,"applications":0,"audit_events":0},"total":0}

@@ -1,0 +1,98 @@
+name: smoke
+
+# 发版前闸门 + 夜间冒烟：同一套 10 步链路（小程序两步用 --skip-miniprogram 跳过）
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # 每日 18:00 UTC = 次日 02:00 (UTC+8)
+    - cron: "0 18 * * *"
+
+concurrency:
+  group: smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: smoke
+          POSTGRES_PASSWORD: change-me-local-only
+          POSTGRES_DB: smoke
+        ports:
+          - 55433:5432
+        options: >-
+          --health-cmd "pg_isready -U smoke -d smoke"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      POSTGRES_USER: smoke
+      POSTGRES_PASSWORD: change-me-local-only
+      POSTGRES_DB: smoke
+      PG_PORT: "55433"
+      DATABASE_URL: postgresql+psycopg://smoke:change-me-local-only@127.0.0.1:55433/smoke
+      SMOKE_PLATFORM_PORT: "5600"
+      SMOKE_BASE_URL: http://127.0.0.1:5600
+      SMOKE_HEADLESS: "1"
+      SIGN_STUB_MODE: ok
+      MINIAPP_STUB_MODE: ok
+      SMOKE_ORG_ID: 6f1c2b40-0000-4000-8000-000000000001
+      SMOKE_SITE_ID: 6f1c2b40-0000-4000-8000-0000000000a1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: 建表（Alembic）
+        run: alembic upgrade head
+
+      - name: 启动 mock 平台并等待就绪
+        run: |
+          mkdir -p reports
+          nohup uvicorn app.main:app --host 127.0.0.1 --port "$SMOKE_PLATFORM_PORT" \
+            > reports/platform.log 2>&1 &
+          echo $! > .platform.pid
+          for _ in $(seq 1 30); do
+            if curl -sf "http://127.0.0.1:${SMOKE_PLATFORM_PORT}/healthz" >/dev/null; then
+              echo "平台就绪"; exit 0
+            fi
+            sleep 1
+          done
+          echo "平台未就绪，日志如下：" && cat reports/platform.log && exit 1
+
+      - name: 跑 10 步链路（跳过小程序两步）
+        run: python -m pytest -q -m "chain or skip_mode" --skip-miniprogram
+
+      - name: 上传报告与证据
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-reports-${{ github.run_id }}
+          path: |
+            reports/
+            EVIDENCE/
+          retention-days: 14
+
+      - name: 失败时打印平台日志
+        if: failure()
+        run: cat reports/platform.log || true

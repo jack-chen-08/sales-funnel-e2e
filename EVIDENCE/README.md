@@ -1,0 +1,37 @@
+# EVIDENCE 索引（本目录全部为真跑落盘，未手工编辑）
+
+| 目录 | 内容 | 对应 AC |
+| --- | --- | --- |
+| `run_5x/` | 连续 5 次完整 12 步的报告（`report.json` / `report.md`）、pytest 日志、逐步 trace 与 HTTP 留证；汇总 `summary.json` / `summary.md` | AC1 |
+| `miniprogram/` | 第 11、12 步的小程序执行证据：三阶段渲染树、真实 HTTP 请求响应（`requests.jsonl`）、交互事件与 21 条断言的机器可读结果（`trace.json`）、人类可读记录（`summary.md`） | AC1（小程序两步） |
+| `esign_reject/` | 拒签失败路径：`report.json` / `report.md`、`pytest.log`、步骤 8 的 trace、失败截图、失败 DOM、HTTP 留证 | AC2 |
+| `cleanup/` | 清理前 psql 直查（21 行）、DELETE 接口响应、清理后 psql 直查（0 行） | AC3 |
+| `skip_miniprogram/` | `--skip-miniprogram` 模式报告（10 通过 / 2 跳过）与产物；命令行开关与 `@pytest.mark.skip_mini` 两种触发方式各一份（`report.*` / `report_marker.*`） | AC4 |
+| `env/` | 起环境日志、Python/依赖/Chromium/PostgreSQL 版本 | 环境基线 |
+
+## 关键数字（取自下列文件）
+
+- AC1：5/5 通过，单次 4.43–4.55s，平均 4.48s，上限 600s → `run_5x/summary.json`
+- AC1（小程序两步）：5/5 次均由 `miniprogram-simulate` 真实执行，`mode=miniapp`、`component_phase` 依次为 `certified` / `home` → `run_5x/summary.json`、`miniprogram/trace.json`
+- AC2：失败步骤 `#8「电子签」`，原因「AssertionError: 电子签未完成两方签署：签约方拒签：签约方在签署页点击拒签（电子签桩模拟）」→ `esign_reject/report.json`
+- AC3：清理前 21 行 → 删除 21 行 → 清理后 12 张业务表合计 0 行 → `cleanup/psql_before_cleanup.log`、`cleanup/psql_after_cleanup.log`
+- AC4：`counts = {"passed": 10, "skipped": 2, "failed": 0}`，跳过步骤号 `[11, 12]` → `skip_miniprogram/report.json`
+
+> 耗时均为「接口桩 + 本地 Chromium + 本地小程序模拟器」环境下的实测值，用于验证链路正确性与稳定性，不代表真实平台性能。
+
+## 复现
+
+```bash
+bash scripts/start_env.sh              # 起 mock 平台
+bash scripts/setup_miniapp.sh          # 安装小程序自动化依赖（首次，仅 Node 侧）
+bash scripts/run_5x.sh                 # AC1（含小程序两步真跑）
+bash scripts/run_reject_demo.sh        # AC2
+bash scripts/cleanup_proof.sh          # AC3
+bash scripts/run_skip_miniprogram.sh   # AC4
+```
+
+查看失败步骤 trace：
+
+```bash
+.venv/bin/playwright show-trace EVIDENCE/esign_reject/artifacts/step_08_esign_trace.zip
+```

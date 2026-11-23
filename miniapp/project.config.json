@@ -1,0 +1,17 @@
+{
+  "appid": "touristappid",
+  "compileType": "miniprogram",
+  "libVersion": "3.5.7",
+  "projectname": "member-recruitment-miniapp",
+  "description": "会员入会链路小程序端（认证 + 首月资源推荐）。appid 为微信测试号占位，真机联调请替换为正式 AppID。",
+  "miniprogramRoot": "./",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": false,
+    "nodeModules": false
+  },
+  "condition": {}
+}

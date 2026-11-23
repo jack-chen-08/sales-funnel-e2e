@@ -1,0 +1,4 @@
+RUN_ID=smk-ac3-before-20261124-033740-cc58
+status=passed passed=10 failed=0
+保留行数（清理前）=21
+evidence=reports/run_smk-ac3-before-20261124-033740-cc58.json

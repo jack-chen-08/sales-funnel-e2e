@@ -1,186 +1,200 @@
-# 招商闭环 12 步链式端到端用例
+# 招商全链路冒烟（12 步链式 E2E）
 
-一条 pytest 用例把一个客户从**官网留资**走到**小程序首月推荐**的 12 个跨系统步骤串起来，
-失败时给出「哪一步、什么错误、请求 trace、已建数据 ID、失败截图」，运行结束按 `run_id`
-清理干净。
+把「官网提交申请 → 首次进入会员小程序」串成 1 条链式用例，用作发版前闸门与夜间冒烟。
+框架：Playwright 1.49 + pytest 8.3 + FastAPI mock 平台 + PostgreSQL 16；小程序两步由微信官方
+`miniprogram-simulate` 在 Node 端组件级真跑，可用 `--skip-miniprogram` 跳过。
 
-- 语言/框架：Python 3.11+ · pytest · Playwright（真浏览器）· FastAPI（被测参考桩）
-- 小程序：Playwright 驱动 H5 认证页（默认）/ `miniprogram-automator`（可选，需微信开发者工具）
-- 全部数据虚构，无真实个人信息、无客户名称
+- 12 步顺序执行，每步断言关键状态并记录 start / end / duration
+- 数据用独立 `run_id`（`smk-<tag>-<时间戳>-<4位随机>`），结束（含失败）自动按 `run_id` 清理并回查残留必须为 0
+- 任一步失败：报告点名失败步骤 + 该步 Playwright trace / 截图 / HTTP 请求响应 + 已创建数据 ID
+- 4 步走真实浏览器点击：**1 官网申请**、**3 顾问首次联系**、**5 前台核销**、**8 电子签签约台**
+- 金额一律以「分」存整数；配置与口令只从环境变量读取；仅使用虚构数据
 
-![12 步全部通过](docs/screenshots/03_chain_all_passed.png)
+## 目录
 
-## 1. 快速开始
+```
+app/                    mock 平台（FastAPI）
+  main.py               21 个路由：4 个真实网页 + 12 步 API + 管理/清理接口
+  workflow.py           12 步状态机（唯一定义，所有接口都过 assert_status）
+  models.py             13 张表，统一 id/org_id/site_id/created_at/created_by/updated_at/deleted_at + run_id
+  stubs.py              电子签桩、小程序桩、外部系统对接点说明
+  templates/            官网申请表、顾问工作台、前台核销台、电子签签约台
+alembic/                PostgreSQL 16 迁移（0001_baseline）
+tests/
+  test_chain_e2e.py     AC1 / AC2 / AC4 三条用例
+  core/runner.py        12 步执行器：计时、留证、失败定位、清理
+  core/client.py        HTTP 客户端（自动带 X-Run-Id，逐步记录请求响应）
+  core/report.py        JSON + Markdown 双份报告
+scripts/                起停环境、跑链、5 连跑、拒签演示、清理校验
+EVIDENCE/               真跑证据（5 次报告、拒签 trace、清理前后直查、环境版本）
+```
+
+## 快速开始
+
+前置：Docker 可用、Python 3.11+（实测 3.12.13）、可联网装依赖与 Chromium。
 
 ```bash
-python3 -m venv .venv
+cd sales-funnel-e2e
+
+# 0) 依赖（首次）
+python3.12 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/playwright install chromium     # 首次需下载浏览器
-.venv/bin/pytest -q                       # 期望 13 passed
+.venv/bin/playwright install chromium
+
+# 1) 配置：只走环境变量，.env 不入库
+cp .env.example .env      # 按需改端口与数据库口令
+
+# 2) 起环境：PostgreSQL 16（docker compose）→ Alembic 建表 → 启动 mock 平台 :5600
+bash scripts/start_env.sh
+
+# 3) 跑 12 步链式用例（AC1）
+bash scripts/run_chain.sh
+#   等价：.venv/bin/python -m pytest -m chain -q
+
+# 4) 跳过小程序两步（AC4）：其余 10 步照常执行
+bash scripts/run_skip_miniprogram.sh
+#   等价：.venv/bin/python -m pytest -m skip_mode -q --skip-miniprogram
+
+# 5) 电子签桩拒签失败演示（AC2）：另起一个 SIGN_STUB_MODE=reject 实例（:5601）
+bash scripts/run_reject_demo.sh
+
+# 6) 连续 5 次 + 汇总（AC1）：报告、日志、产物落到 EVIDENCE/run_5x/
+bash scripts/run_5x.sh
+
+# 7) 清理校验（AC3）：清理前直查非 0 → DELETE 按 run_id 清理 → 清理后直查为 0
+bash scripts/cleanup_proof.sh
+#   已有 run_id 直接查：
+bash scripts/check_cleanup.sh <run_id>
+
+# 停环境
+bash scripts/stop_env.sh
 ```
 
-一键脚本（建 venv + 装依赖 + 跑用例）：
+小程序两步的三种跳过方式，任选其一（等价）：
 
 ```bash
-bash run_tests.sh
+.venv/bin/python -m pytest -m skip_mode -q --skip-miniprogram   # 命令行开关
+.venv/bin/python -m pytest -q -m chain -k marker_skip           # pytest 标记 skip_mini
+.venv/bin/python -m pytest -q -m "chain or skip_mode" --skip-miniprogram   # CI 里的用法
 ```
 
-## 2. 12 步与接口映射
+`@pytest.mark.skip_mini` 已注册在 `pytest.ini`，语义与 `--skip-miniprogram` 完全一致：只跳过第 11、12 步，
+其余 10 步（含 4 步真实浏览器点击）照常执行；供不允许改命令行的流水线使用。
 
-| # | 步骤 | 触发方式 | 接口 / 页面 | 关键断言 |
-|---|------|----------|-------------|----------|
-| 1 | 官网提交申请 | **浏览器** | `GET/POST /apply` | 返回 `app-*`、`lead-*`，线索状态 `assigned` |
-| 2 | 线索按规则分配 | HTTP | `GET /api/crm/leads/{id}` | `assigned_to` 命中顾问池，分配序号递增 |
-| 3 | 顾问首次联系 | HTTP | `POST /api/sales/leads/{id}/contact` | 状态→`contacted`，`first_contact_at` 落库 |
-| 4 | 推进到预约参观 | HTTP | `POST /api/sales/leads/{id}/visit` | 状态→`visit_scheduled`，发 6 位访客码 |
-| 5 | 前台核销访客码 | **浏览器** | `GET/POST /desk/verify` | 状态→`visited`；同一访客码二次核销返回 409 `BAD_STATE` |
-| 6 | 纪要确认 | HTTP | `POST /api/sales/leads/{id}/minutes` | 状态→`minutes_confirmed`，纪要留痕 |
-| 7 | 9.5 折以内报价 | HTTP | `POST /api/sales/leads/{id}/quotes` | 实付 = 标准 × 0.95；折扣 >9.5 折返回 422 |
-| 8 | 电子签 | HTTP | `POST /api/contracts/esign` | 两方签署完成；拒签返回 422 `ESIGN_REJECTED` |
-| 9 | 房态变为已租 | HTTP | `GET /api/site/rooms/{id}` | 房态 `vacant→rented`，绑定合同 |
-| 10 | 会员经理领取交接 | HTTP | `POST /api/ops/handovers` | 状态→`claimed`，房态仍为 `rented` |
-| 11 | 小程序认证 | **浏览器** | `GET/POST /mini/login` | 会员落库 `mb-*`，绑定线索 |
-| 12 | 小程序首页资源推荐 | HTTP | `GET /api/mini/home/recommendations` | 首月推荐 ≥ 1 条 |
+## CI 与夜间定时
 
-浏览器步（1/5/11）由真实 Chromium 驱动，其余走真实 HTTP；两者共用同一个 `run_id`。
+`.github/workflows/smoke.yml`（推 main / PR / 手动触发 / 每日 18:00 UTC＝02:00 UTC+8）：
+PostgreSQL 16 service → `alembic upgrade head` → 起 mock 平台等 `/healthz` → `pytest -m "chain or skip_mode" --skip-miniprogram`
+→ 报告与 `EVIDENCE/` 作为 artifact 上传（保留 14 天）。
 
-## 3. 验收标准对照
+- 只在 CI 环境跑 10 步：CI 未装 `miniapp/node_modules`（模拟器依赖），故统一带 `--skip-miniprogram`；第 11、12 步在报告中记 `skipped`。要 CI 也跑小程序两步，加一步 `bash scripts/setup_miniapp.sh`。
+- 该 workflow 的每条命令都对应本地已跑过的同一序列（见上文 1)–4)），但**GitHub 侧尚未触发过首次运行**，
+  推送后首次跑请以 Actions 页面结论为准。
 
-| AC | 判定 | 复现命令 | 期望输出 |
-|----|------|----------|----------|
-| AC1 12 步链连跑 5 次全过、平均 ≤10 min | 5 次 `ok=True`，12/12 步通过 | `.venv/bin/python scripts/run_5x.py` | `all_passed=True  avg=< 1.1s` |
-| AC2 电子签拒签时报告指出失败步骤并附 trace/截图 | `failed_step="电子签"`（第 8 步），trace 含 422 与异常栈，截图落盘 | `.venv/bin/pytest tests/test_chain.py::test_ac2_esign_rejection_reports_step_and_trace -q` | `1 passed` |
-| AC3 结束后该 run_id 数据清理、查询为 0 | 独立第二 HTTP 客户端复查 `total=0` | `.venv/bin/pytest tests/test_chain.py::test_ac3_run_data_purged_after_run -q` | `1 passed` |
-| AC4 跳过小程序两步后其余 10 步照常通过 | 2 步 `skipped`、10 步 `passed`、整链 `ok=True` | `SKIP_MINI=1 .venv/bin/pytest tests/test_chain.py::test_ac4_skip_mini_mode_runs_remaining_10_steps -q` | `1 passed` |
-| 附加：报价护栏 9.5 折 | 折扣 <9.5 折被拒 | `.venv/bin/pytest tests/test_chain.py::test_quote_beyond_95_percent_is_rejected -q` | `1 passed` |
+清理校验 SQL（可直接贴 psql）：
 
-实测数据（本机 WSL / Chromium，见 `reports/run_report.md`）：
+```sql
+-- 逐表核对某个 run_id 的残留（应为 0）
+SELECT 'applications' AS table_name, count(*) FROM applications WHERE run_id = '<run_id>'
+UNION ALL SELECT 'leads', count(*) FROM leads WHERE run_id = '<run_id>'
+UNION ALL SELECT 'contacts', count(*) FROM contacts WHERE run_id = '<run_id>'
+UNION ALL SELECT 'visits', count(*) FROM visits WHERE run_id = '<run_id>'
+UNION ALL SELECT 'visit_minutes', count(*) FROM visit_minutes WHERE run_id = '<run_id>'
+UNION ALL SELECT 'quotes', count(*) FROM quotes WHERE run_id = '<run_id>'
+UNION ALL SELECT 'esign_envelopes', count(*) FROM esign_envelopes WHERE run_id = '<run_id>'
+UNION ALL SELECT 'rooms', count(*) FROM rooms WHERE run_id = '<run_id>'
+UNION ALL SELECT 'handovers', count(*) FROM handovers WHERE run_id = '<run_id>'
+UNION ALL SELECT 'members', count(*) FROM members WHERE run_id = '<run_id>'
+UNION ALL SELECT 'resource_recommendations', count(*) FROM resource_recommendations WHERE run_id = '<run_id>'
+UNION ALL SELECT 'audit_events', count(*) FROM audit_events WHERE run_id = '<run_id>';
 
-| 次序 | 结果 | 通过步数 | 链耗时 | 残留数据 |
-|------|------|----------|--------|----------|
-| 1–5 | 全部 ✅ | 12/12 | 0.9 s ~ 1.0 s | 0 |
-| 平均 | — | — | **≈1 s** | **0** |
-
-> 耗时数字为「接口桩 + 本地 Chromium」实测值，真实平台按网络与时延会显著变长；
-> 10 分钟红线对应真实环境，故本仓同时给出 5 连跑的原始 JSON（`reports/sample_report_ac1.json`）。
-
-## 4. 交付产物
-
-| 文件 | 内容 |
-|------|------|
-| `reports/step_duration_report.md` | 步骤耗时报告样例（12 步逐项 + 占比） |
-| `reports/step_duration_report_skip_mini.md` | SKIP_MINI 模式下的耗时报告样例（10 步） |
-| `reports/failure_report_esign.md` | 电子签拒签失败报告样例（步骤名 + trace + 截图 + 数据 ID） |
-| `reports/run_report.md` | 运行报告（5 连跑汇总 + AC 对照） |
-| `reports/chain_5x_summary.json` | 5 连跑机器可读汇总（样例） |
-| `reports/sample_report_ac1.json` | 单次运行完整 JSON 报告（样例） |
-| `reports/artifacts/failure_step8_example.png` | 失败步骤截图（样例，Playwright 自动抓取） |
-| `docs/screenshots/*.png` | 官网申请页、前台核销页、全绿步骤表 |
-
-> 每次运行/跑测的原始产物写入 `reports/_runtime/`（已 gitignore），
-> 仓库内只保留上面这些**固定命名**的样例，clone 后跑测试不会弄脏工作区。
-
-重新生成报告与截图：
-
-```bash
-.venv/bin/pytest -q && .venv/bin/python scripts/run_5x.py
-SKIP_MINI=1 .venv/bin/python scripts/run_5x.py --runs 1    # AC4 证据，写独立文件不覆盖
-.venv/bin/python scripts/make_reports.py
-.venv/bin/python scripts/capture_walkthrough.py
+-- 一行汇总
+SELECT sum(rows) AS remaining_rows_total FROM (
+  SELECT count(*) AS rows FROM applications WHERE run_id = '<run_id>'
+  UNION ALL SELECT count(*) FROM leads        WHERE run_id = '<run_id>'
+  UNION ALL SELECT count(*) FROM audit_events WHERE run_id = '<run_id>'
+  -- 其余表同上，完整脚本见 scripts/check_cleanup.sh
+) s;
 ```
 
-## 5. 失败即停与报告结构
+## 环境变量
 
-单次运行产出 JSON：
+| 变量 | 作用 | 默认 |
+| --- | --- | --- |
+| `DATABASE_URL` | SQLAlchemy 连接串（psycopg3） | 必填，见 `.env.example` |
+| `POSTGRES_USER` / `POSTGRES_PASSWORD` / `POSTGRES_DB` / `PG_PORT` | 容器与直查用 | 见 `.env.example` |
+| `SMOKE_PLATFORM_PORT` | mock 平台端口 | `5600` |
+| `SMOKE_BASE_URL` | 用例目标地址（pytest `--smoke-base-url` 优先） | `http://127.0.0.1:5600` |
+| `SIGN_STUB_MODE` | `ok` 正常两方签署 / `reject` 第二方拒签 | `ok` |
+| `MINIAPP_STUB_MODE` | `ok` / `error`（小程序桩异常，用于演练） | `ok` |
+| `SMOKE_HEADLESS` | Playwright 是否无头 | `1` |
+| `SMOKE_ORG_ID` / `SMOKE_SITE_ID` | 业务表 org/site（虚构 UUID） | `.env.example` |
+| `SMOKE_KEEP_DATA` | `1` 时跳过自动清理，仅供 AC3 前后对比取证 | 未设置 |
 
-```json
-{
-  "run_id": "run-20261122192106-ac8df7",
-  "ok": false,
-  "failed_step": "电子签",
-  "failed_step_index": 8,
-  "error": "HTTPStatusError: 422 ESIGN_REJECTED",
-  "trace": [{"method": "POST", "path": "/api/contracts/esign", "status": 422, "body": "{...}"},
-            {"traceback": "..."}],
-  "screenshot": "reports/_runtime/artifacts/failure_step8_c32d04.png",
-  "data_ids": {"application_id": "app-...", "lead_id": "lead-...", "quote_id": "q-..."},
-  "steps": [{"index": 1, "name": "官网提交申请", "status": "passed", "duration_ms": 203.4}, "..."],
-  "cleanup": {"removed": 9},
-  "counts_after_cleanup": {"application": 0, "total": 0}
-}
-```
+## 12 步与断言
 
-失败后**不再继续执行**后续步骤，直接进收尾：按 `run_id` 清库并复查。
+| # | 步骤 | 执行方 | 方式 | 关键断言 |
+|---|------|--------|------|----------|
+| 1 | 官网提交申请 | 官网访客 | 浏览器表单 | 申请单 UUID、状态 `submitted` |
+| 2 | 线索按规则分配 | 销售中台 | API | 命中 `region=east→ADV-101`、状态 `assigned` |
+| 3 | 顾问首次联系 | 招商顾问 | 浏览器点击 | 工作台标签「已联系」、状态 `contacted`、回显联系记录 ID |
+| 4 | 推进到预约参观 | 招商顾问 | API | 6 位访客码、状态 `visit_booked` |
+| 5 | 前台核销访客码 | 前台 | 浏览器输入 | 码一致、文案「核销成功」、状态 `visited` |
+| 6 | 纪要确认 | 招商顾问 | API | 状态 `minutes_confirmed` |
+| 7 | 9.5 折以内报价 | 招商顾问 | API | 折扣 ≤ 500bp 且成交价 ≥ 挂牌价 95%、状态 `quoted` |
+| 8 | 电子签 | 签约双方 | 浏览器签约台 | 两方签署完成、信封 `signed`、主状态 `signed` |
+| 9 | 房态变为已租 | 运营中台 | API | 房态 `rented`、主状态 `rented` |
+| 10 | 会员经理领取交接 | 会员经理 | API | 承接人 MM-021、会员档案创建、状态 `handed_over` |
+| 11 | 小程序完成认证 | 企业联系人 | API 桩 | `certified`（`--skip-miniprogram` 时跳过） |
+| 12 | 小程序首页首月资源推荐 | 企业联系人 | API 桩 | 当月、≥3 项、配额 >0、状态 `activated`（同上可跳过） |
 
-## 6. 小程序两步：驱动与跳过
+状态机见 `app/workflow.py`；每一步先校验入口状态，非法推进返回 `409 STATE_CONFLICT`。
 
-| 模式 | 启用方式 | 行为 |
-|------|----------|------|
-| H5（默认） | `MINI_DRIVER=playwright-h5` | Playwright 驱动会员端认证表单，本机可复现 |
-| 真小程序 | `MINI_DRIVER=miniprogram-automator` | `mini/automator_verify.js` 连微信开发者工具自动化端口 |
-| 跳过 | `SKIP_MINI=1` 或 `ChainRunner(skip_mini=True)` | 第 11/12 步记 `skipped`，10 步照跑 |
+## 报告与证据
 
-> `miniprogram-automator` 路径需要微信开发者工具（已登录 + 服务端口开启），
-> **本仓 CI 环境不具备，因此该路径未做真机验证**；失败会抛明确异常，不会静默降级。
+每次运行产出：
 
-驱动的**协议契约**有独立单测覆盖（`tests/test_mini_driver.py`，8 条），保证：
+- `reports/run_<run_id>.json` / `.md`：结论、逐步 start/end/duration、总计、失败步骤、已创建 ID、清理明细
+- `reports/artifacts/<run_id>/`：每个 UI 步骤一份 `step_XX_*_trace.zip`，每个步骤一份 `step_XX_*_http.json`；
+  失败步骤额外有 `*_failure.png` 与 `*_failure.html`
 
-| 场景 | 期望 |
-|------|------|
-| node 脚本正常输出 `{member_id}` | 取到 `mb-*` 并返回 |
-| 退出码非 0 | 抛 `RuntimeError`，异常信息含 stderr（不吞错） |
-| 输出缺 `member_id` | 抛 `RuntimeError`，不返回空值当成功 |
-| 未装 node / 脚本缺失 | 构造驱动时即抛错 |
-| `node --check mini/automator_verify.js` | 执行器语法必须通过 |
+看 trace：`.venv/bin/playwright show-trace reports/artifacts/<run_id>/step_08_esign_trace.zip`
 
-即「没装开发者工具」不会变成静默通过，只会是显式失败。
+已提交的真跑证据见 `EVIDENCE/README.md` 与 `DELIVERY.md`。
 
-## 7. 接真实平台要改哪里
+## 外部系统对接点（当前为 mock / 桩）
 
-本仓 `app/` 是**接口约定一致的参考桩**，不是客户平台。切换真实环境：
+| 依赖 | 当前实现 | 对接点（替换位置） |
+| --- | --- | --- |
+| S4-SITE 官网与入会申请 | mock 平台自带官网页面 | `app/main.py` `/site/apply*`；用例 `tests/core/runner.py:step_01` |
+| S3-SALES 业务员工作台 v1 | mock 工作台页面 + 接口 | `/advisor/console`、`/api/leads/*`、`/api/visits/*`、`/api/quotes` |
+| S2-CRM 电子签 | `EsignStub`（`SIGN_STUB_MODE`） | `app/stubs.py:sign_envelope` |
+| S3-MINI 会员小程序 v1 | 官方 `miniprogram-simulate`（组件级） | 仓库内 `miniapp/` + `/api/miniapp/*`；页面级需 miniprogram-automator |
 
-1. 把 `ChainRunner(base_url=...)` 指向真实网关（或用环境变量 `E2E_BASE_URL`）。
-2. 对照真实接口调整 `chain/runner.py` 里的路径与字段名（映射表见第 2 节）。
-3. 删除/隔离 `app/` 与 `/api/_test/*`、`/_diag/*`（仅测试用的状态注入与清理端点，
-   **生产环境必须不注册**）。
-4. 若小程序侧走真机，设置 `MINI_DRIVER=miniprogram-automator` 与 `WX_DEVTOOLS_CLI`。
+## 已知短板
 
-## 8. 目录结构
+- 小程序两步由微信官方 `miniprogram-simulate` 执行**组件级真跑**（21 条断言全 PASS）；**页面壳与路由未覆盖**，
+  要页面级/真机级需微信开发者工具 + `miniprogram-automator`（AppID + 扫码，属外部条件）。`--skip-miniprogram` 逻辑不变。
+- 除 4 步浏览器点击 + 2 步官方模拟器外，其余 6 步走接口；这是为了让链条在无 UI 的存量模块上也能跑，全链路口径仍是一条用例串行。
+- 耗时基线 4.5s（5 次平均）是本机 mock 的数值，接入真实系统后需重新标定 10 分钟阈值。
+- `smoke_runs` 运行台账在清理后保留 1 行（含 `cleaned_at`），便于审计；12 张业务表为 0。
 
-```
-sales-funnel-e2e/
-├── app/                # 参考桩：api.py（接口）/ store.py（内存库）/ harness.py（起服务）
-├── chain/              # runner.py（12 步 + 报告）/ mini_driver.py（小程序驱动）
-├── mini/               # automator_verify.js（真小程序执行器）
-├── tests/              # test_chain.py（AC1–AC4 + 报价护栏）/ test_mini_driver.py（驱动契约）
-├── scripts/            # run_5x.py / make_reports.py / capture_walkthrough.py
-├── reports/            # 固定命名样例；运行产物进 reports/_runtime/（gitignored）
-├── docs/screenshots/   # 页面截图
-├── .github/workflows/  # e2e.yml（发版闸门 + 夜间冒烟）
-├── requirements.txt
-└── run_tests.sh
-```
+## 小程序两步的执行方式（组件级真跑；页面级未覆盖）
 
-## 9. 发版前闸门与夜间冒烟
+第 11、12 步（小程序内完成认证 / 首页首月资源推荐）由**微信官方 `miniprogram-simulate`** 在 Node 端执行：
 
-`.github/workflows/e2e.yml` 每次 push / PR 以及每天 UTC 18:00（北京时间 02:00）自动跑：
+| 项 | 现状 |
+| --- | --- |
+| 小程序工程 | 仓库内 `miniapp/`（`app.js`/`app.json`/`app.wxss`/`pages/entry`/`components/member-entry`） |
+| 执行器 | `miniprogram-simulate`，内部由官方 `miniprogram-compiler` 编译真实 WXML/WXSS |
+| `wx.request` | 驱动脚本用 Node `http` 桥接，经 loopback 打到本仓自起平台（不出公网） |
+| 产出 | 三阶段渲染树、事件序列、请求/响应、21 条断言 → `reports/artifacts/<run_id>/miniapp/` |
+| 一条命令 | `bash scripts/setup_miniapp.sh` 后 `node scripts/miniapp_smoke.js --base-url http://127.0.0.1:5600 --member-id <uuid>` |
 
-| 阶段 | 命令 | 作用 |
-|------|------|------|
-| 语法闸 | `node --check mini/automator_verify.js` | 小程序执行器语法不得坏 |
-| 用例闸 | `pytest -q` | AC1–AC4 + 报价护栏 + 驱动契约，13 条 |
-| 稳定性闸 | `python scripts/run_5x.py` | 连续 5 次必须全过，残留必须为 0 |
-| 降级闸 | `SKIP_MINI=1 python scripts/run_5x.py --runs 1` | 小程序不可用时 10 步仍通过 |
-| 产物 | `make_reports.py` + artifact 上传 | 报告与截图留档 14 天 |
+**未覆盖**（要补需微信开发者工具 + `miniprogram-automator`，属外部条件）：
 
-任一步失败即整条红，作为发版阻断信号；夜间跑的是同一套命令，不做裁剪。
+- `pages/entry` 页面壳与 `app.json` 路由——`wx.navigateTo` 未执行，simulate 不支持页面路由；
+- 像素截图——模拟器只输出渲染树，不产生位图；
+- 微信登录态——`code2session` 由平台桩替代，`openid` 为确定性桩值。
 
-## 10. 数据与合规
-
-- 所有企业、联系人、房源均为**虚构测试数据**（`虚构会员企业-<run 尾号>`、`13800000000`）。
-- 不含真实个人信息 / 客户名称；不引入向境外传输数据的第三方 SDK。
-- 每次运行以 `run_id` 隔离，结束后软删除 + 物理清理，库内残留 0 条。
-
-## 许可
-
-MIT，见 `LICENSE`。可自由使用、修改、再分发，保留版权声明即可。
+要只跑其余 10 步（CI 的跑法）：加 `--skip-miniprogram`，两步骤记 `skipped`，链路仍串行。

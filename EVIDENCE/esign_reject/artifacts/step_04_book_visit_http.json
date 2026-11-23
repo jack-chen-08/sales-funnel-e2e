@@ -1,0 +1,24 @@
+{
+  "step": "推进到预约参观",
+  "run_id": "smk-reject-20261124-033728-deb2",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/visits/book",
+      "request": {
+        "lead_id": "5f80fb8e-9193-4337-968f-ec2dcc99b210",
+        "scheduled_hours_ahead": 24
+      },
+      "status": 200,
+      "response": {
+        "step": "推进到预约参观",
+        "visit_id": "2bbf2272-a47a-468e-90aa-0637042ba3fa",
+        "visit_code": "690568",
+        "scheduled_at": "2026-11-24T19:37:30.378402+00:00",
+        "application_status": "visit_booked"
+      },
+      "elapsed_ms": 14.38
+    }
+  ],
+  "ui": {}
+}

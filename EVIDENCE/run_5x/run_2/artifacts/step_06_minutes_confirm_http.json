@@ -1,0 +1,23 @@
+{
+  "step": "纪要确认",
+  "run_id": "smk-5x-r2-20261124-033655-33ba",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/minutes/confirm",
+      "request": {
+        "visit_id": "c56c8dd4-2493-47b7-8e62-f186ef305849",
+        "content": "客户确认 12 层南向 186㎡，认可物业与交付标准"
+      },
+      "status": 200,
+      "response": {
+        "step": "纪要确认",
+        "minutes_id": "8142c546-4b59-4403-8fad-d281a22dc862",
+        "confirmed_at": "2026-11-23T19:36:58.654830+00:00",
+        "application_status": "minutes_confirmed"
+      },
+      "elapsed_ms": 11.28
+    }
+  ],
+  "ui": {}
+}

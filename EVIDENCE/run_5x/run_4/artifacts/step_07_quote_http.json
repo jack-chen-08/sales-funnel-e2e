@@ -1,0 +1,27 @@
+{
+  "step": "9.5 折以内报价",
+  "run_id": "smk-5x-r4-20261124-033705-7779",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/quotes",
+      "request": {
+        "room_id": "f86aa798-6210-4b7f-abc9-0495298d077d",
+        "discount_bp": 500
+      },
+      "status": 200,
+      "response": {
+        "step": "9.5 折以内报价",
+        "quote_id": "0439da5a-6d74-40b4-bccf-0b034836bf53",
+        "envelope_id": "90a936e4-9cae-4b2a-b7de-ba53c1152bcd",
+        "room_id": "f86aa798-6210-4b7f-abc9-0495298d077d",
+        "list_price_cents": 1860000,
+        "discount_bp": 500,
+        "final_price_cents": 1767000,
+        "application_status": "quoted"
+      },
+      "elapsed_ms": 11.21
+    }
+  ],
+  "ui": {}
+}

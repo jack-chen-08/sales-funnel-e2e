@@ -1,0 +1,24 @@
+{
+  "step": "推进到预约参观",
+  "run_id": "smk-5x-r5-20261124-033710-2a82",
+  "calls": [
+    {
+      "method": "POST",
+      "path": "/api/visits/book",
+      "request": {
+        "lead_id": "c77f651f-0eb9-44af-96d9-7ce882bb1803",
+        "scheduled_hours_ahead": 24
+      },
+      "status": 200,
+      "response": {
+        "step": "推进到预约参观",
+        "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2",
+        "visit_code": "621057",
+        "scheduled_at": "2026-11-24T19:37:12.728834+00:00",
+        "application_status": "visit_booked"
+      },
+      "elapsed_ms": 11.84
+    }
+  ],
+  "ui": {}
+}

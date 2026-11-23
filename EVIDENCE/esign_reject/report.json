@@ -1,0 +1,261 @@
+{
+  "run_id": "smk-reject-20261124-033728-deb2",
+  "scenario": "esign-reject",
+  "mode": "skip-miniprogram",
+  "skip_miniprogram": true,
+  "base_url": "http://127.0.0.1:5601",
+  "started_at": "2026-11-23T19:37:28.292+00:00",
+  "finished_at": "2026-11-23T19:37:32.052+00:00",
+  "total_duration_ms": 3759.6,
+  "status": "failed",
+  "counts": {
+    "passed": 7,
+    "failed": 1,
+    "skipped": 0
+  },
+  "failed_step": {
+    "no": 8,
+    "key": "esign",
+    "name": "电子签",
+    "reason": "AssertionError: 电子签未完成两方签署：签约方拒签：签约方在签署页点击拒签（电子签桩模拟）"
+  },
+  "steps": [
+    {
+      "no": 1,
+      "key": "site_apply",
+      "name": "官网提交申请",
+      "actor": "官网访客",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:28.700+00:00",
+      "ended_at": "2026-11-23T19:37:29.534+00:00",
+      "duration_ms": 833.5,
+      "assertion": "官网提交成功，申请单状态=submitted，返回 UUID 单号",
+      "evidence": {
+        "evidence": {
+          "application_id": "46a6ed0d-e2e6-4c9f-a9b2-ba1aa9575bb7",
+          "application_status": "submitted",
+          "page_url": "http://127.0.0.1:5601/site/apply/submit"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-reject-20261124-033728-deb2/step_01_site_apply_trace.zip",
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_01_site_apply_http.json"
+      }
+    },
+    {
+      "no": 2,
+      "key": "lead_assign",
+      "name": "线索按规则分配",
+      "actor": "销售中台",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:29.597+00:00",
+      "ended_at": "2026-11-23T19:37:29.612+00:00",
+      "duration_ms": 14.3,
+      "assertion": "线索分配命中规则 region=east->ADV-101，状态 assigned",
+      "evidence": {
+        "evidence": {
+          "step": "线索按规则分配",
+          "lead_id": "5f80fb8e-9193-4337-968f-ec2dcc99b210",
+          "advisor_id": "ADV-101",
+          "assign_rule": "region=east->ADV-101",
+          "application_status": "assigned"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_02_lead_assign_http.json"
+      }
+    },
+    {
+      "no": 3,
+      "key": "first_contact",
+      "name": "顾问首次联系",
+      "actor": "招商顾问",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:29.612+00:00",
+      "ended_at": "2026-11-23T19:37:30.333+00:00",
+      "duration_ms": 721.4,
+      "assertion": "工作台点击后线索状态=contacted，页面回显联系记录 ID",
+      "evidence": {
+        "evidence": {
+          "badge": "已联系",
+          "contact_id": "f0e86764-e62c-4b0a-bac6-c1fe25cd7bac",
+          "backend_status": "contacted"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-reject-20261124-033728-deb2/step_03_first_contact_trace.zip",
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_03_first_contact_http.json"
+      }
+    },
+    {
+      "no": 4,
+      "key": "book_visit",
+      "name": "推进到预约参观",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:30.373+00:00",
+      "ended_at": "2026-11-23T19:37:30.388+00:00",
+      "duration_ms": 14.8,
+      "assertion": "预约参观创建成功，生成 6 位访客码，状态=visit_booked",
+      "evidence": {
+        "evidence": {
+          "step": "推进到预约参观",
+          "visit_id": "2bbf2272-a47a-468e-90aa-0637042ba3fa",
+          "visit_code": "690568",
+          "scheduled_at": "2026-11-24T19:37:30.378402+00:00",
+          "application_status": "visit_booked"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_04_book_visit_http.json"
+      }
+    },
+    {
+      "no": 5,
+      "key": "visitor_checkin",
+      "name": "前台核销访客码",
+      "actor": "前台",
+      "mode": "ui",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:30.388+00:00",
+      "ended_at": "2026-11-23T19:37:31.126+00:00",
+      "duration_ms": 737.5,
+      "assertion": "访客码在 A 座前台核销成功，状态=visited",
+      "evidence": {
+        "evidence": {
+          "page_text": "核销成功，到访时间 2026-11-23T19:37:31.076644+00:00",
+          "backend_status": "visited"
+        }
+      },
+      "artifacts": {
+        "trace": "reports/artifacts/smk-reject-20261124-033728-deb2/step_05_visitor_checkin_trace.zip",
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_05_visitor_checkin_http.json"
+      }
+    },
+    {
+      "no": 6,
+      "key": "minutes_confirm",
+      "name": "纪要确认",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:31.173+00:00",
+      "ended_at": "2026-11-23T19:37:31.187+00:00",
+      "duration_ms": 14.1,
+      "assertion": "参观纪要确认落库，状态=minutes_confirmed",
+      "evidence": {
+        "evidence": {
+          "step": "纪要确认",
+          "minutes_id": "97215061-1744-4176-9285-2823f8f7e26d",
+          "confirmed_at": "2026-11-23T19:37:31.179180+00:00",
+          "application_status": "minutes_confirmed"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_06_minutes_confirm_http.json"
+      }
+    },
+    {
+      "no": 7,
+      "key": "quote",
+      "name": "9.5 折以内报价",
+      "actor": "招商顾问",
+      "mode": "api",
+      "status": "passed",
+      "started_at": "2026-11-23T19:37:31.187+00:00",
+      "ended_at": "2026-11-23T19:37:31.204+00:00",
+      "duration_ms": 16.8,
+      "assertion": "成交价为挂牌价 95.0%（9.5 折以内），成交价 1767000 分，状态=quoted",
+      "evidence": {
+        "evidence": {
+          "step": "9.5 折以内报价",
+          "quote_id": "79995f91-a6f4-45ba-a6d7-1c7d061be3a9",
+          "envelope_id": "dc28cf17-e1b7-4132-bde5-f0bf73fb8a4c",
+          "room_id": "3bb21890-5b2e-43be-8dd7-da7c7ca04d44",
+          "list_price_cents": 1860000,
+          "discount_bp": 500,
+          "final_price_cents": 1767000,
+          "application_status": "quoted"
+        }
+      },
+      "artifacts": {
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_07_quote_http.json"
+      }
+    },
+    {
+      "no": 8,
+      "key": "esign",
+      "name": "电子签",
+      "actor": "签约双方",
+      "mode": "ui",
+      "status": "failed",
+      "started_at": "2026-11-23T19:37:31.204+00:00",
+      "ended_at": "2026-11-23T19:37:32.012+00:00",
+      "duration_ms": 807.9,
+      "assertion": "",
+      "evidence": {},
+      "artifacts": {
+        "trace": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_trace.zip",
+        "http": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_http.json",
+        "screenshot": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_failure.png",
+        "html": "reports/artifacts/smk-reject-20261124-033728-deb2/step_08_esign_failure.html"
+      }
+    }
+  ],
+  "created_ids": {
+    "rooms": "3bb21890-5b2e-43be-8dd7-da7c7ca04d44,6e004a84-80f6-46a3-af78-1726280a1494",
+    "room_primary": "3bb21890-5b2e-43be-8dd7-da7c7ca04d44",
+    "room_secondary": "6e004a84-80f6-46a3-af78-1726280a1494",
+    "application_id": "46a6ed0d-e2e6-4c9f-a9b2-ba1aa9575bb7",
+    "lead_id": "5f80fb8e-9193-4337-968f-ec2dcc99b210",
+    "advisor_id": "ADV-101",
+    "contact_id": "f0e86764-e62c-4b0a-bac6-c1fe25cd7bac",
+    "visit_id": "2bbf2272-a47a-468e-90aa-0637042ba3fa",
+    "visit_code": "690568",
+    "minutes_id": "97215061-1744-4176-9285-2823f8f7e26d",
+    "quote_id": "79995f91-a6f4-45ba-a6d7-1c7d061be3a9",
+    "envelope_id": "dc28cf17-e1b7-4132-bde5-f0bf73fb8a4c"
+  },
+  "cleanup": {
+    "cleaned_at": "2026-11-23T19:37:32.108+00:00",
+    "deleted": {
+      "resource_recommendations": 0,
+      "members": 0,
+      "handovers": 0,
+      "rooms": 2,
+      "esign_envelopes": 1,
+      "quotes": 1,
+      "visit_minutes": 1,
+      "visits": 1,
+      "contacts": 1,
+      "leads": 1,
+      "applications": 1,
+      "audit_events": 8
+    },
+    "deleted_total": 17,
+    "remaining": {
+      "resource_recommendations": 0,
+      "members": 0,
+      "handovers": 0,
+      "rooms": 0,
+      "esign_envelopes": 0,
+      "quotes": 0,
+      "visit_minutes": 0,
+      "visits": 0,
+      "contacts": 0,
+      "leads": 0,
+      "applications": 0,
+      "audit_events": 0
+    },
+    "remaining_total": 0
+  },
+  "artifacts": {
+    "artifacts_dir": "reports/artifacts/smk-reject-20261124-033728-deb2",
+    "report_json": "reports/run_smk-reject-20261124-033728-deb2.json",
+    "report_md": "reports/run_smk-reject-20261124-033728-deb2.md"
+  }
+}
