@@ -88,8 +88,8 @@ PostgreSQL 16 service → `alembic upgrade head` → 起 mock 平台等 `/health
 → 报告与 `EVIDENCE/` 作为 artifact 上传（保留 14 天）。
 
 - 只在 CI 环境跑 10 步：CI 未装 `miniapp/node_modules`（模拟器依赖），故统一带 `--skip-miniprogram`；第 11、12 步在报告中记 `skipped`。要 CI 也跑小程序两步，加一步 `bash scripts/setup_miniapp.sh`。
-- 该 workflow 的每条命令都对应本地已跑过的同一序列（见上文 1)–4)），但**GitHub 侧尚未触发过首次运行**，
-  推送后首次跑请以 Actions 页面结论为准。
+- 该 workflow 的每条命令都对应本地已跑过的同一序列（见上文 1)–4)）。**首次运行已通过**：
+  `smoke` 在 `3d0c490` 上 completed / success（2026-11-23T20:06:58Z，[run 45255958600](https://github.com/jack-chen-08/sales-funnel-e2e/actions/runs/45255958600)）。
 
 清理校验 SQL（可直接贴 psql）：
 
