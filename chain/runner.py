@@ -170,7 +170,15 @@ class ChainRunner:
         visit_id = pg.inner_text("#visit-id").strip()
         self.expect(visit_id.startswith("visit-"), f"visit_id shape: {visit_id}")
         self.data_ids["checked_in_visit_id"] = visit_id
-        self.ui("POST /desk/verify (form submit)", {"code": code, "visit_id": visit_id})
+
+        # 访客码一次性：同一码二次核销必须被拒（409 BAD_STATE），不得静默成功
+        again = self.call("POST", "/api/site/visits/verify", json={"code": code})
+        self.expect(again.status_code == 409,
+                    f"访客码二次核销应被拒（409），实际 {again.status_code}: {again.text[:160]}")
+        self.expect("BAD_STATE" in again.text, f"二次核销错误码异常: {again.text[:160]}")
+
+        self.ui("POST /desk/verify (form submit)",
+                {"code": code, "visit_id": visit_id, "reuse_blocked": True})
 
     def s6_minutes(self) -> None:
         r = self.call("POST", f"/api/sales/leads/{self.data_ids['lead_id']}/minutes",
@@ -292,7 +300,7 @@ class ChainRunner:
     def _capture_failure(self, exc: StepFailed) -> str | None:
         """Publish step status to the stub, open the diagnostic page, screenshot it."""
         try:
-            arts = ROOT / "reports" / "artifacts"
+            arts = ROOT / "reports" / "_runtime" / "artifacts"
             arts.mkdir(parents=True, exist_ok=True)
             self.client.post("/api/_test/chain-status",
                              json={"run_id": self.run_id, "steps": self.steps})

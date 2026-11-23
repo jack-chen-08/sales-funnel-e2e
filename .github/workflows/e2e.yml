@@ -1,0 +1,50 @@
+name: e2e-chain
+
+# 需求方指定的用途：发版前闸门 + 夜间冒烟
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 18 * * *"   # UTC 18:00 = 北京时间 02:00 夜间冒烟
+  workflow_dispatch:
+
+jobs:
+  chain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装依赖与 chromium
+        run: |
+          python -m pip install -q -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: 小程序执行器语法检查
+        run: node --check mini/automator_verify.js
+
+      - name: 全量用例（AC1–AC4 + 9.5折护栏 + 驱动契约）
+        run: python -m pytest -q
+
+      - name: AC1 证据 · 连续 5 次
+        run: python scripts/run_5x.py
+
+      - name: AC4 证据 · 跳过小程序
+        run: SKIP_MINI=1 python scripts/run_5x.py --runs 1
+
+      - name: 生成报告样例
+        run: python scripts/make_reports.py
+
+      - name: 上传运行产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-reports
+          path: reports/_runtime/
+          retention-days: 14

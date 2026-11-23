@@ -8,7 +8,10 @@ from app.harness import stub_server
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
-REPORTS.mkdir(exist_ok=True)
+# 每次运行的原始产物落在 _runtime/（已 gitignore），仓库里的 reports/*.md
+# 是人类可读样例，由 scripts/make_reports.py 从 _runtime 生成后固定命名。
+RUNTIME = REPORTS / "_runtime"
+RUNTIME.mkdir(parents=True, exist_ok=True)
 
 
 @pytest.fixture(scope="session")
@@ -28,6 +31,6 @@ def stub_process(base_url):
 
 
 def dump(name: str, report: dict) -> Path:
-    path = REPORTS / name
+    path = RUNTIME / name
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     return path

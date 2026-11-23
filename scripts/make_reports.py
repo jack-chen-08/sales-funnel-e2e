@@ -1,23 +1,35 @@
 """Turn the JSON reports into the human-readable artefacts the ACs ask for.
 
-产出：
-  reports/step_duration_report.md   步骤耗时报告样例（每步 + 合计）
-  reports/failure_report_esign.md   电子签拒签失败报告样例（步骤名 + trace + 已建数据 ID）
-  reports/run_report.md             运行报告（5 连跑汇总 + AC 对照）
+输入：reports/_runtime/（每次运行生成，已 gitignore）
+输出（固定命名，进版本库，作为交付样例）：
+  reports/step_duration_report.md            步骤耗时报告样例（每步 + 合计）
+  reports/step_duration_report_skip_mini.md  SKIP_MINI=1 时 10 步的耗时报告
+  reports/failure_report_esign.md            电子签拒签失败报告（步骤名 + trace + 已建数据 ID）
+  reports/run_report.md                      运行报告（5 连跑汇总 + AC 对照）
+  reports/chain_5x_summary.json              5 连跑机器可读汇总（样例）
+  reports/sample_report_ac1.json             单次运行完整 JSON（样例）
+  reports/artifacts/failure_step8_example.png 失败截图（样例，固定名）
 """
 from __future__ import annotations
 
 import json
-import os
 import platform
+import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "reports"
+RUNTIME = REPORTS / "_runtime"
+SAMPLE_SHOT = "artifacts/failure_step8_example.png"
 
 
 def load(name: str) -> dict:
-    return json.loads((REPORTS / name).read_text(encoding="utf-8"))
+    path = RUNTIME / name
+    if not path.exists():
+        raise SystemExit(
+            f"缺少运行时产物 {path.relative_to(ROOT)}。\n"
+            "先跑：.venv/bin/pytest -q && .venv/bin/python scripts/run_5x.py")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def step_table(report: dict) -> str:
@@ -30,7 +42,8 @@ def step_table(report: dict) -> str:
         share = s["duration_ms"] / total * 100
         lines.append(f"| {s['index']} | {s['name']} | {s['status']} | "
                      f"{s['duration_ms']:.1f} | {share:.1f}% |")
-    lines.append(f"| — | **合计（12 步 + 收尾）** | {'passed' if report['ok'] else 'failed'} | "
+    lines.append(f"| — | **合计（{len(report['steps'])} 步 + 收尾）** | "
+                 f"{'passed' if report['ok'] else 'failed'} | "
                  f"**{report['total_ms']:.1f}** | 100% |")
     return "\n".join(lines)
 
@@ -57,11 +70,9 @@ def duration_report(report: dict, title: str) -> str:
 """
 
 
-def failure_report(report: dict) -> str:
+def failure_report(report: dict, shot_rel: str) -> str:
     failed_view = {**report, "ok": False}
     steps_tbl = step_table(failed_view)
-    shot = report.get("screenshot")
-    shot_rel = os.path.relpath(shot, REPORTS) if shot else "（本次运行未产出截图）"
     trace_lines = []
     for i, t in enumerate(report["trace"], 1):
         if "traceback" in t:
@@ -81,7 +92,7 @@ def failure_report(report: dict) -> str:
 | 结论 | **失败（预期）** |
 | 失败步骤 | **第 {report['failed_step_index']} 步「{report['failed_step']}」** |
 | 错误 | `{report['error'][:160]}` |
-| 已执行步数 | {len(report['steps'])}（失败即停，第 9–12 步未执行） |
+| 已执行步数 | {len(report['steps'])}（失败即停，后续步骤未执行） |
 | 收尾 | run_id 数据已清理，残留 {report['counts_after_cleanup']['total']} 条 |
 
 ## 失败点之前的步骤
@@ -96,7 +107,7 @@ def failure_report(report: dict) -> str:
 
 ![失败步骤截图]({shot_rel})
 
-> 截图为运行时 Playwright 打开的步骤状态页，红框行为失败步骤「{report['failed_step']}」。
+> 截图为运行时 Playwright 打开的步骤状态页，失败步骤一行标红。
 
 ## 本次运行已创建的数据 ID（用于回溯清理）
 
@@ -129,21 +140,21 @@ def run_report() -> str:
 - 用例：#1–#12 招商闭环，单一 run_id 串联
 - 环境：{platform.platform()} · Python {platform.python_version()} · Playwright chromium · FastAPI(uvicorn)
 
-## AC1 连续 5 次运行
+## AC1 连续 {summary['attempts']} 次运行
 
 | 次序 | run_id | 结果 | 通过步数 | 链耗时 (s) | 实际耗时 (s) | 残留数据 |
 |------|--------|------|----------|------------|--------------|----------|
 {rows}
 
-- 5 次全部通过：**{summary['all_passed']}**
+- {summary['attempts']} 次全部通过：**{summary['all_passed']}**
 - 平均链耗时：**{summary['avg_chain_seconds']} s**（红线 600 s，余量 {600 - summary['avg_chain_seconds']:.0f} s）
 - 最大单次：{summary['max_chain_ms'] / 1000:.2f} s
-- 5 次合计残留数据：**{summary['leftover_total']}** 条
+- {summary['attempts']} 次合计残留数据：**{summary['leftover_total']}** 条
 
 复现命令：
 
 ```bash
-.venv/bin/python scripts/run_5x.py          # 输出上表并落盘 reports/chain_5x_summary.json
+.venv/bin/python scripts/run_5x.py          # 输出上表并落盘 reports/_runtime/chain_5x_summary.json
 ```
 
 ## AC2 电子签拒签报告
@@ -175,10 +186,10 @@ def run_report() -> str:
 ## 复现
 
 ```bash
-.venv/bin/pytest -q                                    # 5 条用例：AC1–AC4 + 9.5折护栏
-.venv/bin/python scripts/run_5x.py                     # AC1 证据（5 连跑）
-SKIP_MINI=1 .venv/bin/python scripts/run_5x.py --runs 1  # AC4 证据（可选）
-.venv/bin/python scripts/make_reports.py               # 重新生成本目录三份报告
+.venv/bin/pytest -q                                       # 全部用例
+.venv/bin/python scripts/run_5x.py                        # AC1 证据（5 连跑）
+SKIP_MINI=1 .venv/bin/python scripts/run_5x.py --runs 1   # AC4 证据（可选）
+.venv/bin/python scripts/make_reports.py                  # 从 _runtime 生成上述样例
 ```
 """
 
@@ -187,21 +198,30 @@ def main() -> None:
     single = load("report_ac1_single.json")
     ac2 = load("report_ac2_esign_reject.json")
     ac4 = load("report_ac4_skip_mini.json")
+
     (REPORTS / "step_duration_report.md").write_text(
         duration_report(single, "步骤耗时报告样例（12 步全链）"), encoding="utf-8")
     (REPORTS / "step_duration_report_skip_mini.md").write_text(
         duration_report(ac4, "步骤耗时报告样例（SKIP_MINI=1，执行 10 步）"), encoding="utf-8")
-    (REPORTS / "failure_report_esign.md").write_text(failure_report(ac2), encoding="utf-8")
+    (REPORTS / "failure_report_esign.md").write_text(
+        failure_report(ac2, SAMPLE_SHOT), encoding="utf-8")
     (REPORTS / "run_report.md").write_text(run_report(), encoding="utf-8")
-    # 只保留被报告引用的那张失败截图，避免旧运行的 artifacts 堆积
-    keep = ac2.get("screenshot")
+
+    # 机器可读样例（固定名，避免每次运行新增文件）
     arts = REPORTS / "artifacts"
-    if arts.exists() and keep:
-        keep_path = (ROOT / keep).resolve()
-        for png in arts.glob("*.png"):
-            if png.resolve() != keep_path:
-                png.unlink()
-    print("written:", *(p.name for p in sorted(REPORTS.glob("*.md"))))
+    arts.mkdir(parents=True, exist_ok=True)
+    src = ac2.get("screenshot")
+    if src:
+        src_path = (ROOT / src)
+        if src_path.exists():
+            shutil.copyfile(src_path, arts / Path(SAMPLE_SHOT).name)
+    for src_name, dst_name in (("report_ac1_single.json", "sample_report_ac1.json"),
+                               ("chain_5x_summary.json", "chain_5x_summary.json")):
+        (REPORTS / dst_name).write_text(
+            json.dumps(load(src_name), ensure_ascii=False, indent=2), encoding="utf-8")
+
+    print("written:", *(p.name for p in sorted(REPORTS.glob("*.md"))),
+          *(p.name for p in sorted(REPORTS.glob("*.json"))))
 
 
 if __name__ == "__main__":

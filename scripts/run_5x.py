@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import statistics
 import sys
 import time
@@ -19,23 +20,27 @@ from app.harness import stub_server          # noqa: E402
 from chain.runner import ChainRunner         # noqa: E402
 
 REPORTS = ROOT / "reports"
-REPORTS.mkdir(exist_ok=True)
+RUNTIME = REPORTS / "_runtime"
+RUNTIME.mkdir(parents=True, exist_ok=True)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=5)
-    ap.add_argument("--skip-mini", action="store_true")
+    ap.add_argument("--skip-mini", action="store_true",
+                    default=os.getenv("SKIP_MINI") == "1",
+                    help="跳过小程序两步（也认环境变量 SKIP_MINI=1）")
     args = ap.parse_args()
 
     runs = []
+    suffix = "_skip_mini" if args.skip_mini else ""
     with stub_server() as base_url:
         for i in range(1, args.runs + 1):
             t0 = time.perf_counter()
             report = ChainRunner(base_url, skip_mini=args.skip_mini,
                                  run_tag=f"5x-{i}").run()
             wall = round(time.perf_counter() - t0, 1)
-            (REPORTS / f"chain_5x_run{i}.json").write_text(
+            (RUNTIME / f"chain_5x_run{i}{suffix}.json").write_text(
                 json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
             passed = sum(1 for s in report["steps"] if s["status"] == "passed")
             runs.append({
@@ -61,7 +66,7 @@ def main() -> int:
         "leftover_total": sum(r["leftover_after_cleanup"] for r in runs),
         "skip_mini": args.skip_mini,
     }
-    (REPORTS / "chain_5x_summary.json").write_text(
+    (RUNTIME / f"chain_5x_summary{suffix}.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print("\n=== 5x summary ===")

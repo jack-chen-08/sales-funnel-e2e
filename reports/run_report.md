@@ -1,6 +1,6 @@
 # 链式用例运行报告
 
-- 生成时间：2026-11-22
+- 生成时间：2026-11-23
 - 被测对象：本仓 `app/` 参考桩（对外接口约定与真实平台一致，替换 base_url 即可对接）
 - 用例：#1–#12 招商闭环，单一 run_id 串联
 - 环境：Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.43 · Python 3.12.13 · Playwright chromium · FastAPI(uvicorn)
@@ -9,21 +9,21 @@
 
 | 次序 | run_id | 结果 | 通过步数 | 链耗时 (s) | 实际耗时 (s) | 残留数据 |
 |------|--------|------|----------|------------|--------------|----------|
-| 1 | `run-20261122192517-fbbc11` | ✅ 通过 | 12/12 | 1.06 | 1.10 | 0 |
-| 2 | `run-20261122192518-cce235` | ✅ 通过 | 12/12 | 0.99 | 1.00 | 0 |
-| 3 | `run-20261122192519-ef01b1` | ✅ 通过 | 12/12 | 0.98 | 1.00 | 0 |
-| 4 | `run-20261122192520-435f9b` | ✅ 通过 | 12/12 | 0.97 | 1.00 | 0 |
-| 5 | `run-20261122192521-f6f8c0` | ✅ 通过 | 12/12 | 0.96 | 1.00 | 0 |
+| 1 | `run-20261124024522-a734a8` | ✅ 通过 | 12/12 | 0.97 | 1.00 | 0 |
+| 2 | `run-20261124024523-d0d7d3` | ✅ 通过 | 12/12 | 0.96 | 1.00 | 0 |
+| 3 | `run-20261124024524-f3b846` | ✅ 通过 | 12/12 | 0.99 | 1.00 | 0 |
+| 4 | `run-20261124024525-0f1ef2` | ✅ 通过 | 12/12 | 0.96 | 1.00 | 0 |
+| 5 | `run-20261124024526-2ff563` | ✅ 通过 | 12/12 | 0.96 | 1.00 | 0 |
 
 - 5 次全部通过：**True**
-- 平均链耗时：**0.99 s**（红线 600 s，余量 599 s）
-- 最大单次：1.06 s
+- 平均链耗时：**0.97 s**（红线 600 s，余量 599 s）
+- 最大单次：0.99 s
 - 5 次合计残留数据：**0** 条
 
 复现命令：
 
 ```bash
-.venv/bin/python scripts/run_5x.py          # 输出上表并落盘 reports/chain_5x_summary.json
+.venv/bin/python scripts/run_5x.py          # 输出上表并落盘 reports/_runtime/chain_5x_summary.json
 ```
 
 ## AC2 电子签拒签报告
@@ -66,8 +66,8 @@
 ## 复现
 
 ```bash
-.venv/bin/pytest -q                                    # 5 条用例：AC1–AC4 + 9.5折护栏
-.venv/bin/python scripts/run_5x.py                     # AC1 证据（5 连跑）
-SKIP_MINI=1 .venv/bin/python scripts/run_5x.py --runs 1  # AC4 证据（可选）
-.venv/bin/python scripts/make_reports.py               # 重新生成本目录三份报告
+.venv/bin/pytest -q                                       # 全部用例
+.venv/bin/python scripts/run_5x.py                        # AC1 证据（5 连跑）
+SKIP_MINI=1 .venv/bin/python scripts/run_5x.py --runs 1   # AC4 证据（可选）
+.venv/bin/python scripts/make_reports.py                  # 从 _runtime 生成上述样例
 ```
