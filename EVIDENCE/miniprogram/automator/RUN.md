@@ -33,6 +33,12 @@ bash scripts/open_automator_port.sh                    # 显式打开自动化�
 .venv/bin/python -m pytest -m chain -q --miniapp-executor automator
 ```
 
+## 连续 5 次（AC1，页面级 automator）
+
+2026-11-24 14:39–14:42 用 `bash scripts/run_5x.sh --miniapp-executor automator` 连跑 5 次，5/5 通过，
+每次 12/12、清理残留 0、第 11/12 步执行器均为 `miniprogram-automator`，单次 23.81–24.87s（平均 24.18s）。
+每次的 4 张截图、`trace.json`、`requests.jsonl` 原样落在 `EVIDENCE/run_5x/run_{1..5}/artifacts/miniapp/`。
+
 ## 能力边界（如实，不回避）
 
 1. **非真机**：执行环境是微信开发者工具（桌面版），不是手机微信客户端；真机验收需真实 AppID + 手机扫码安装。

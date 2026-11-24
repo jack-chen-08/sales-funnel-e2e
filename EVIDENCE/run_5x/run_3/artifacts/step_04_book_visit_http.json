@@ -1,23 +1,23 @@
 {
   "step": "推进到预约参观",
-  "run_id": "smk-5x-r3-20261124-142842-6188",
+  "run_id": "smk-5x-r3-20261124-144102-afda",
   "calls": [
     {
       "method": "POST",
       "path": "/api/visits/book",
       "request": {
-        "lead_id": "2733a9cb-db40-4b42-882a-899fc6487da4",
+        "lead_id": "c5df9c1e-e05d-4ce4-bc17-3d72d48eaa94",
         "scheduled_hours_ahead": 24
       },
       "status": 200,
       "response": {
         "step": "推进到预约参观",
-        "visit_id": "b2449521-5d7d-43c2-8ffb-e20bdffbd9ab",
-        "visit_code": "749687",
-        "scheduled_at": "2026-11-25T06:28:44.223902+00:00",
+        "visit_id": "ecd6ca49-d24d-4a6f-b7b3-ca582a474e63",
+        "visit_code": "971946",
+        "scheduled_at": "2026-11-25T06:41:04.846666+00:00",
         "application_status": "visit_booked"
       },
-      "elapsed_ms": 12.33
+      "elapsed_ms": 16.75
     }
   ],
   "ui": {}

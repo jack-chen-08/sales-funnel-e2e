@@ -1,24 +1,24 @@
 {
   "step": "会员经理领取交接",
-  "run_id": "smk-5x-r5-20261124-142852-9edd",
+  "run_id": "smk-5x-r5-20261124-144214-d749",
   "calls": [
     {
       "method": "POST",
       "path": "/api/handovers/claim",
       "request": {
-        "lead_id": "a31b171d-600f-4479-935e-f105ea335e1a",
+        "lead_id": "11b6487f-386c-4e19-b947-fe6864aa6fd1",
         "member_manager_id": "MM-021"
       },
       "status": 200,
       "response": {
         "step": "会员经理领取交接",
-        "handover_id": "3297c7c5-d5ee-4030-b671-da7a7d34b3f7",
-        "member_id": "8827bd86-7b4f-4b58-bb4c-48f6b4da87e4",
+        "handover_id": "490a4ec8-485b-4841-9109-b5ab70f11810",
+        "member_id": "9a9c2139-8ad6-4eeb-86b9-0f77b571c660",
         "from_advisor_id": "ADV-101",
         "to_member_manager_id": "MM-021",
         "application_status": "handed_over"
       },
-      "elapsed_ms": 11.68
+      "elapsed_ms": 12.29
     }
   ],
   "ui": {}

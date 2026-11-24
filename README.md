@@ -61,7 +61,8 @@ bash scripts/run_skip_miniprogram.sh
 bash scripts/run_reject_demo.sh
 
 # 6) 连续 5 次 + 汇总（AC1）：报告、日志、产物落到 EVIDENCE/run_5x/
-bash scripts/run_5x.sh
+bash scripts/run_5x.sh --miniapp-executor automator   # 页面级（需开发者工具，见下节环境变量）
+#   没有开发者工具的机器：bash scripts/run_5x.sh --miniapp-executor simulate
 
 # 7) 清理校验（AC3）：清理前直查非 0 → DELETE 按 run_id 清理 → 清理后直查为 0
 bash scripts/cleanup_proof.sh
@@ -180,7 +181,8 @@ SELECT sum(rows) AS remaining_rows_total FROM (
   （`miniapp_executor_fallback`），报告与交付说明里不会把回退写成 automator 已跑。`--skip-miniprogram` 逻辑不变。
 - 两个执行器都不是真机：未接真实 AppID 与微信登录态，`code2session` 由平台桩替代（`openid` 为确定性桩值）。
 - 除 4 步浏览器点击 + 2 步官方模拟器外，其余 6 步走接口；这是为了让链条在无 UI 的存量模块上也能跑，全链路口径仍是一条用例串行。
-- 耗时基线 4.5s（5 次平均）是本机 mock 的数值，接入真实系统后需重新标定 10 分钟阈值。
+- 耗时基线：页面级 automator 5 次平均 24.18s（第 11 步约 20s 主要是开发者工具窗口启动与首屏编译）；
+  组件级 simulate 5 次平均 4.69s。均为本机 mock 数值，接入真实系统后需重新标定 10 分钟阈值。
 - `smoke_runs` 运行台账在清理后保留 1 行（含 `cleaned_at`），便于审计；12 张业务表为 0。
 
 ## 小程序两步的执行方式（页面级 automator 为主，组件级 simulate 为补充）
@@ -221,6 +223,12 @@ export MINIAPP_PROJECT_DIR='C:\work\2828_miniapp'        # 带真实 appid 的�
 export MINIAPP_NODE='C:\Program Files\nodejs\node.exe'   # WSL 里跑 pytest 时必须显式指定 Windows 侧 node
 export MINIAPP_AUTOMATOR_DRIVER='C:\work\2828_scripts\miniapp_automator.js'
 export MINIAPP_AUTOMATOR_WS='ws://127.0.0.1:9420'
+#
+# 本文实测这组具体取值（2026-11-24，Windows 侧）——
+#   WECHAT_DEVTOOLS_CLI = C:\wdt\cli.bat            （cli.bat 的短路径，避免中文目录名/空格）
+#   MINIAPP_PROJECT_DIR = C:\Users\<user>\AppData\Local\Temp\2828_auto\miniapp
+#   MINIAPP_NODE        = C:\Users\<user>\AppData\Local\Temp\nodejs\node-v26.13.1-win-x64\node.exe
+# 路径里有空格或中文时，优先换成 8.3 短路径或复制到纯 ASCII 临时目录。
 
 # 3) 打开自动化端口（显式一步；端口没开就明确报错，不会静默回退）
 bash scripts/open_automator_port.sh
@@ -262,6 +270,7 @@ bash scripts/setup_miniapp.sh
 
 - **非真机**：执行环境是开发者工具 / Node 模拟器，不是手机微信客户端；真机验收需真实 AppID + 扫码。
 - **无微信登录态**：`code2session` 由平台桩替代，`openid` 为确定性桩值（`wx_stub_*`）。
-- `automator` 的运行记录（截图 + trace）见 `EVIDENCE/miniapp_automator_run.md`；未实际跑过的环境不做任何"已跑通"表述。
+- `automator` 的运行记录（12/12 报告、`trace.json`、4 张截图、`requests.jsonl`）见
+  `EVIDENCE/miniprogram/automator/`（入口 `RUN.md`）；未实际跑过的环境不做任何「已跑通」表述。
 
 要只跑其余 10 步（CI 的跑法）：加 `--skip-miniprogram`，两步骤记 `skipped`，链路仍串行。

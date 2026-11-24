@@ -1,6 +1,6 @@
 {
   "step": "顾问首次联系",
-  "run_id": "smk-5x-r3-20261124-142842-6188",
+  "run_id": "smk-5x-r3-20261124-144102-afda",
   "calls": [
     {
       "method": "FETCH",
@@ -8,19 +8,19 @@
       "status": 200,
       "response": {
         "step": "顾问首次联系",
-        "contact_id": "f58f73c1-af4c-48b4-aa96-0586d760e108",
-        "contacted_at": "2026-11-24T06:28:44.112306+00:00",
+        "contact_id": "dd1e67a3-6609-4e7f-be39-d646960c4ebf",
+        "contacted_at": "2026-11-24T06:41:04.639811+00:00",
         "application_status": "contacted"
       }
     },
     {
       "method": "GET",
-      "path": "/api/admin/run/smk-5x-r3-20261124-142842-6188/state",
+      "path": "/api/admin/run/smk-5x-r3-20261124-144102-afda/state",
       "request": null,
       "status": 200,
       "response": {
-        "run_id": "smk-5x-r3-20261124-142842-6188",
-        "application_id": "51f78128-c743-48b6-8ee3-25e3c63176e6",
+        "run_id": "smk-5x-r3-20261124-144102-afda",
+        "application_id": "2538ed38-d209-45b3-8ca6-1dc9b28c3720",
         "status": "contacted",
         "company_name": "星澜数字科技（虚构）",
         "events": [
@@ -29,7 +29,7 @@
             "step_key": "site_apply",
             "event": "site_apply:ok",
             "payload": {
-              "application_id": "51f78128-c743-48b6-8ee3-25e3c63176e6",
+              "application_id": "2538ed38-d209-45b3-8ca6-1dc9b28c3720",
               "company_name": "星澜数字科技（虚构）"
             }
           },
@@ -38,7 +38,7 @@
             "step_key": "lead_assign",
             "event": "lead_assign:ok",
             "payload": {
-              "lead_id": "2733a9cb-db40-4b42-882a-899fc6487da4",
+              "lead_id": "c5df9c1e-e05d-4ce4-bc17-3d72d48eaa94",
               "advisor_id": "ADV-101",
               "rule": "region=east->ADV-101"
             }
@@ -48,13 +48,13 @@
             "step_key": "first_contact",
             "event": "first_contact:ok",
             "payload": {
-              "contact_id": "f58f73c1-af4c-48b4-aa96-0586d760e108",
+              "contact_id": "dd1e67a3-6609-4e7f-be39-d646960c4ebf",
               "channel": "phone"
             }
           }
         ]
       },
-      "elapsed_ms": 8.08
+      "elapsed_ms": 16.51
     }
   ],
   "ui": {}

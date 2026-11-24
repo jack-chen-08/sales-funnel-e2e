@@ -1,61 +1,46 @@
-# 小程序两步执行记录
+# 小程序两步执行记录（页面级 · miniprogram-automator）
 
-- 执行时间（UTC）：2026-11-24T06:28:56.738Z → 2026-11-24T06:28:56.959Z
-- 执行环境：Node v22.22.3 + 微信官方 miniprogram-simulate（非真机）
+- 执行时间（UTC）：2026-11-24T06:42:19.165Z → 2026-11-24T06:42:37.795Z
+- 执行环境：Node v22.23.5 + 微信开发者工具自动化端口（port 9420）
+- 项目路径：\\wsl.localhost\Ubuntu\home\ubuntuuser\clawhunt_delivery\2828_recruitment_smoke\miniapp
 - 平台地址：http://127.0.0.1:5600
-- run_id：smk-5x-r5-20261124-142852-9edd　member_id：8827bd86-7b4f-4b58-bb4c-48f6b4da87e4
-- 结论：**passed**（断言 21 条，失败 0 条）
+- run_id：smk-5x-r5-20261124-144214-d749　member_id：9a9c2139-8ad6-4eeb-86b9-0f77b571c660
+- 结论：**passed**（断言 13 条，失败 0 条）
 
-## 步骤与渲染树
+## 步骤与耗时
 
-| 阶段 | 组件 phase | 渲染树 SHA256（前 16 位） | 字节数 | 快照文件 |
-| --- | --- | --- | --- | --- |
-| 初始 | idle | 4ced3a671a762587 | 962 | 01_initial_render.html |
-| 第 11 步 认证后 | certified | e1fffa1d69bd166b | 1309 | 02_after_certify.html |
-| 第 12 步 首页后 | home | 4f2298c08c350db8 | 2276 | 03_after_home.html |
+| 阶段 | 页面 | 断言内容 | 耗时(ms) |
+|---|---|---|---|
+| connect | undefined | 连接已开启自动化端口的开发者工具窗口（复用已编译好的小程序项目） | 22 |
+| entry | /pages/entry/index | reLaunch 到 pages/entry/index 并等待页面数据就绪 | 4207 |
+| certify | /pages/entry/index | 页面内输入验证码并点击「提交认证」按钮（真实点击事件） | 1569 |
+| home | pages/home/index | 首页渲染首月资源推荐（页面上真实节点计数） | 1278 |
 
-## 真实 HTTP 请求
+## 页面上真实数到的节点
 
-| # | 方法 | 路径 | 状态码 | 耗时(ms) | 响应要点 |
-| --- | --- | --- | --- | --- | --- |
-| 1 | POST | /api/miniapp/certify | 200 | 29 | certify_status=certified, openid=wx_stub_96b7717fe29b |
-| 2 | GET | /api/miniapp/home?member_id=8827bd86-7b4f-4b58-bb4c-48f6b4da87e4 | 200 | 13 | month=2026-11, items=3 |
+- 资源条目：3 项（接口 items=3）
+- 条目明细：共享会议室 4 小时/配额 4小时；黑白打印 500 页/配额 500页；洽谈区使用 8 次/配额 8次
+- 月份行：资源月份：2026-11　合计行：共 3 项资源
 
-## 交互事件序列
+## 截图
 
-1. `certified`
-2. `home-ready`
+- entry：01_entry.png
+- certify：01b_entry_certified.png
+- home：02_home.png
+- homeFull：03_home_full.png
 
 ## 断言明细
 
-| 断言 | 结果 | 实际值 |
-| --- | --- | --- |
-| 初始渲染出现「第 11 步 · 企业联系人认证」标题 | PASS | — |
-| 初始渲染阶段为待认证（phase=idle） | PASS | `"idle"` |
-| 找到验证码输入框 .code-input | PASS | — |
-| 找到「提交认证」按钮 .certify-btn | PASS | — |
-| 第 11 步向平台发起真实 HTTP 请求 POST /api/miniapp/certify | PASS | `"/api/miniapp/certify"` |
-| 认证请求带 x-run-id 头（run 数据隔离） | PASS | `{"content-type":"application/json","x-run-id":"smk-5x-r5-20261124-142852-9edd"}` |
-| 认证接口返回 200 | PASS | `200` |
-| 认证接口返回 certify_status=certified | PASS | `{"step":"签约企业联系人在小程序完成认证","member_id":"8827bd86-7b4f-4b58-bb4c-48f6b4da87e4","certify_status":"certified","openid_stub":"wx_stub_96b7717fe29b","channel":"miniprogram-stub","application_status":"certified"}` |
-| 组件阶段切换为已认证（phase=certified） | PASS | `"certified"` |
-| 渲染树显示认证状态 certified | PASS | — |
-| 组件触发 certified 事件 | PASS | `["certified"]` |
-| 找到「进入首页」按钮 .home-btn | PASS | — |
-| 第 12 步向平台发起真实 HTTP 请求 GET /api/miniapp/home | PASS | `"/api/miniapp/home?member_id=8827bd86-7b4f-4b58-bb4c-48f6b4da87e4"` |
-| 首页接口返回 200 | PASS | `200` |
-| 组件阶段切换为已进入首页（phase=home） | PASS | `"home"` |
-| 首月资源条目不少于 3 项 | PASS | `3` |
-| 每条资源配额为正数 | PASS | `[8,2,4]` |
-| 资源月份与接口返回一致 | PASS | `{"dom":"2026-11","api":"2026-11"}` |
-| 渲染树中资源条目数量与数据一致 | PASS | `{"rendered":3,"data":3}` |
-| 渲染树包含资源月份与条目数文案 | PASS | `{"month":"2026-11","count":3}` |
-| 组件触发 home-ready 事件 | PASS | `["certified","home-ready"]` |
-
-## 能力边界（如实声明）
-
-1. 非真机：执行环境是 Node 端微信官方模拟器，不是微信客户端。
-2. 无像素截图：模拟器只输出渲染树（WXML 解析结果），不产生位图。需要截图请在微信开发者工具/真机执行。
-3. 无微信登录态：`code2session` 由平台侧桩替代，openid 为确定性桩值。
-4. wx.request 由 Node http 桥接，经 loopback 打到本仓自起平台（不出公网）；真机由微信客户端发起同一请求。
-5. 只加载组件：`pages/entry` 页面壳与 `app.json` 路由（wx.navigateTo）未执行；simulate 不支持路由。页面级需微信开发者工具 + miniprogram-automator（AppID + 扫码，属外部条件）。
+- PASS 小程序从 pages/entry/index 进入（真实页面，非组件宿主）　`{"pagePath":"/pages/entry/index","phase":"idle","memberId":"9a9c2139-8ad6-4eeb-86b9-0f77b571c660","waitMs":11}`
+- PASS 入口页渲染出验证码输入框与提交按钮　`{"inCustomComponent":true,"component":"components/member-entry/index","componentNodeHandle":true,"inputNodeFound":true,"buttonNodeFound":true,"inputOuterWxml":"<input class=\"code-input\" placeholder=\"6 位短信验证码\" value=\"\" maxlength=\"6\" type=\"number\"></input>","buttonOuterWxml":"<button class=\`
+- PASS 页面 <input> 真实输入 6 位验证码　`{"inputValue":"123456","componentVerifyCode":"","expect":"123456"}`
+- PASS 认证接口在页面内真实返回 certified　`{"certify_status":"certified","openid_stub":"wx_stub_96b7717fe29b","application_status":"certified"}`
+- PASS 小程序桩 openid 形如 wx_stub_*　`"wx_stub_96b7717fe29b"`
+- PASS 认证成功后 wx.navigateTo 真实跳转到 pages/home/index　`{"currentPath":"pages/home/index","waitMs":266}`
+- PASS 首页在页面上渲染出 ≥3 个资源条目　`{"renderedItems":3,"itemTexts":[{"name":"共享会议室 4 小时","quota":"配额 4小时"},{"name":"黑白打印 500 页","quota":"配额 500页"},{"name":"洽谈区使用 8 次","quota":"配额 8次"}]}`
+- PASS 页面可见条目数与接口 items 数一致　`{"renderedItems":3,"apiItems":3}`
+- PASS 页面可见月份与接口返回月份一致　`{"monthText":"资源月份：2026-11","apiMonth":"2026-11"}`
+- PASS 所有可见资源配额为正数　`[{"name":"共享会议室 4 小时","quota":"配额 4小时"},{"name":"黑白打印 500 页","quota":"配额 500页"},{"name":"洽谈区使用 8 次","quota":"配额 8次"}]`
+- PASS 服务端 audit 记录到第 11 步事件（请求携带正确 x-run-id 才会命中本 run）　`{"step_no":11,"step_key":"miniapp_certify","event":"miniapp_certify:ok","payload":{"member_id":"9a9c2139-8ad6-4eeb-86b9-0f77b571c660","openid_stub":"wx_stub_96b7717fe29b"}}`
+- PASS 服务端 audit 记录到第 12 步事件　`{"step_no":12,"step_key":"miniapp_home","event":"miniapp_home:ok","payload":{"recommendation_id":"29e30a62-3573-4440-b198-c77ac2a38c52","month":"2026-11"}}`
+- PASS 服务端 audit 的 member_id 与本次小程序会话一致　`{"auditMemberId":"9a9c2139-8ad6-4eeb-86b9-0f77b571c660","expected":"9a9c2139-8ad6-4eeb-86b9-0f77b571c660"}`

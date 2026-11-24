@@ -1,6 +1,6 @@
 {
   "step": "签约企业联系人在小程序完成认证",
-  "run_id": "smk-5x-r1-20261124-142831-aa52",
+  "run_id": "smk-5x-r1-20261124-143951-eeb4",
   "calls": [
     {
       "source": "miniapp",
@@ -9,31 +9,33 @@
       "status": 200,
       "response": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "cbacfe0a-a2ee-4108-a74e-600e71a22938",
+        "member_id": "bccb3a82-66d0-4eea-bd39-c4634a8ce7e8",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
-        "application_status": "certified"
+        "application_status": "certified",
+        "duration_ms": 28,
+        "at": 1795502411081
       },
-      "duration_ms": 31
+      "duration_ms": 28
     },
     {
       "source": "miniapp",
       "method": "GET",
-      "path": "/api/miniapp/home?member_id=cbacfe0a-a2ee-4108-a74e-600e71a22938",
+      "path": "/api/miniapp/home?member_id=bccb3a82-66d0-4eea-bd39-c4634a8ce7e8",
       "status": 200,
       "response": {
         "step": "小程序首页看到首月资源推荐",
-        "recommendation_id": "f3ce3208-5dc3-48a6-b6aa-c9c7b07788f4",
-        "member_id": "cbacfe0a-a2ee-4108-a74e-600e71a22938",
+        "recommendation_id": "02e6f33f-f2a1-492a-a53f-cf97949e7bf5",
+        "member_id": "bccb3a82-66d0-4eea-bd39-c4634a8ce7e8",
         "month": "2026-11",
         "headline": "2026-11 首月资源包",
         "items": [
           {
-            "code": "RES-MEETING-4",
-            "name": "共享会议室 4 小时",
-            "quota": 4,
-            "unit": "小时",
+            "code": "RES-PRINT-500",
+            "name": "黑白打印 500 页",
+            "quota": 500,
+            "unit": "页",
             "source": "miniprogram-stub"
           },
           {
@@ -44,16 +46,16 @@
             "source": "miniprogram-stub"
           },
           {
-            "code": "RES-PRINT-500",
-            "name": "黑白打印 500 页",
-            "quota": 500,
-            "unit": "页",
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
             "source": "miniprogram-stub"
           }
         ],
         "application_status": "activated"
       },
-      "duration_ms": 13
+      "duration_ms": 56
     }
   ],
   "ui": {}

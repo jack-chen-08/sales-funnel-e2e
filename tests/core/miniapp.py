@@ -122,9 +122,40 @@ def devtools_cli() -> str | None:
     return None
 
 
+def _ws_endpoint() -> tuple[str, int] | None:
+    """把 MINIAPP_AUTOMATOR_WS 解析成 (host, port)。"""
+    m = re.match(r"^wss?://([^/:]+)(?::(\d+))?", AUTOMATOR_WS or "")
+    if not m:
+        return None
+    return m.group(1), int(m.group(2) or 80)
+
+
+def _ws_reachable(host: str, port: int, timeout: float = 1.5) -> bool:
+    import socket
+
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+
 def _automator_availability() -> tuple[bool, str]:
     if not _node_available():
         return False, f"automator 执行器需要 Node.js ≥ 16（当前配置的 node 不可用：{NODE_BIN}）"
+    # WSL 的 node 到不了 Windows 侧开发者工具绑在 127.0.0.1 的自动化端口（WSL2 NAT 下
+    # 127.0.0.1 指向 Linux 自身），也不能直接 spawn .bat。此时若继续用 WSL node，
+    # 驱动只会报「端口未开启」，把「该换 Windows node」这个真实原因掩盖成端口问题，
+    # 所以在这里提前判定并给出可执行修法。
+    if not _is_windows_bin(NODE_BIN):
+        endpoint = _ws_endpoint()
+        if endpoint and endpoint[0] in ("127.0.0.1", "localhost", "::1") and not _ws_reachable(*endpoint):
+            return False, (
+                f"automator 需要 Windows 侧 node：当前 MINIAPP_NODE={NODE_BIN}（WSL 的 node）"
+                f"访问不到自动化端口 {AUTOMATOR_WS}（WSL2 下 127.0.0.1 是 Linux 自己）。"
+                "请把 MINIAPP_NODE 指向 Windows 的 node.exe，"
+                "并先运行 bash scripts/open_automator_port.sh 打开端口"
+            )
     if not (project_dir() / "node_modules" / "miniprogram-automator").exists():
         return False, (
             f"未安装 miniprogram-automator：请在 {project_dir()} 执行 `npm install`"

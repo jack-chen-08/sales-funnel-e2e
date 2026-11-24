@@ -12,8 +12,10 @@
 
 ## 关键数字（取自下列文件）
 
-- AC1：5/5 通过，单次 4.43–4.55s，平均 4.48s，上限 600s → `run_5x/summary.json`
-- AC1（小程序两步）：5/5 次均由 `miniprogram-simulate` 真实执行，`mode=miniapp`、`component_phase` 依次为 `certified` / `home` → `run_5x/summary.json`、`miniprogram/trace.json`
+- AC1：5/5 通过，单次 23.81–24.87s，平均 24.18s，上限 600s → `run_5x/summary.json`
+- AC1（小程序两步）：5/5 次均由 `miniprogram-automator` 在真页面执行（`--miniapp-executor automator`，
+  每次迭代前由 `scripts/run_5x.sh` 调 `open_automator_port.sh` 重新开窗），`mode=miniapp`、`component_phase`
+  依次为 `certified` / `home`，每次各 4 张截图与 `trace.json` → `run_5x/run_{1..5}/artifacts/miniapp/`
 - AC1（小程序两步·页面级）：1 次由 `miniprogram-automator` + 开发者工具真实执行，13 条断言 0 失败，`entry_page=/pages/entry/index`、路由到 `pages/home/index`、页面数到 3 个资源条目 → `miniprogram/automator/report.json`、`miniprogram/automator/trace.json`
 - AC2：失败步骤 `#8「电子签」`，原因「AssertionError: 电子签未完成两方签署：签约方拒签：签约方在签署页点击拒签（电子签桩模拟）」→ `esign_reject/report.json`
 - AC3：清理前 21 行 → 删除 21 行 → 清理后 12 张业务表合计 0 行 → `cleanup/psql_before_cleanup.log`、`cleanup/psql_after_cleanup.log`

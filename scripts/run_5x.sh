@@ -10,11 +10,27 @@ mkdir -p "$OUT"
 for i in 1 2 3 4 5; do
   echo "==================== 第 ${i} / 5 次 ===================="
   mkdir -p "$OUT/run_${i}"
+  # 本次运行的起始标记文件：用于识别「本轮根本没产出报告」的情况
+  START_MARK="$OUT/run_${i}/.start_mark"
+  touch "$START_MARK"
+  # automator 模式：`cli auto` 起的窗口在自动化会话结束后会自行退出，所以**每次迭代前**
+  # 都要确保端口在（脚本自身先探活，已开就直接跳过，不做中途自愈）。
+  if printf '%s\n' "$@" | grep -q 'automator'; then
+    bash scripts/open_automator_port.sh || { echo "第 ${i} 次前置失败：自动化端口没打开，终止"; exit 3; }
+  fi
   if ! .venv/bin/python -m pytest -m chain -q --run-tag "5x-r${i}" "$@" 2>&1 | tee "$OUT/run_${i}/pytest.log"; then
     echo "第 ${i} 次未通过，终止"
     exit 1
   fi
-  LATEST_JSON="$(ls -t reports/run_smk-5x-r${i}-*.json | head -1)"
+  # 只在「本次运行之后新生成」的报告里取最新一份；否则说明用例被 skip，
+  # 绝不允许把上一轮的旧报告当成这一轮结果（会把 skipped 洗成 passed）。
+  NEW_REPORTS="$(find reports -maxdepth 1 -name "run_smk-5x-r${i}-*.json" -newer "$START_MARK" | sort)"
+  if [ -z "$NEW_REPORTS" ]; then
+    echo "第 ${i} 次没有生成新报告（用例很可能被 skip），终止：不接受复用旧报告"
+    tail -20 "$OUT/run_${i}/pytest.log"
+    exit 2
+  fi
+  LATEST_JSON="$(echo "$NEW_REPORTS" | tail -1)"
   RID="$(basename "$LATEST_JSON" .json)"
   RID="${RID#run_}"
   cp "$LATEST_JSON" "$OUT/run_${i}/report.json"
