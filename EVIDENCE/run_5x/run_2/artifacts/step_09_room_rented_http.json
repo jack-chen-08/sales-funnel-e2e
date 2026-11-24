@@ -1,20 +1,20 @@
 {
   "step": "房态变为已租",
-  "run_id": "smk-5x-r2-20261124-144026-f594",
+  "run_id": "smk-5x-r2-20261124-145157-e059",
   "calls": [
     {
       "method": "POST",
-      "path": "/api/rooms/72e84b9a-13af-4ec9-be77-5787e5aa16de/lease",
+      "path": "/api/rooms/dc4dbf06-4ae1-4cce-9b3b-ca1f1021ecd3/lease",
       "request": null,
       "status": 200,
       "response": {
         "step": "房态变为已租",
-        "room_id": "72e84b9a-13af-4ec9-be77-5787e5aa16de",
+        "room_id": "dc4dbf06-4ae1-4cce-9b3b-ca1f1021ecd3",
         "room_no": "12F-1801",
         "room_status": "rented",
         "application_status": "rented"
       },
-      "elapsed_ms": 14.64
+      "elapsed_ms": 11.05
     }
   ],
   "ui": {}

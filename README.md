@@ -181,7 +181,7 @@ SELECT sum(rows) AS remaining_rows_total FROM (
   （`miniapp_executor_fallback`），报告与交付说明里不会把回退写成 automator 已跑。`--skip-miniprogram` 逻辑不变。
 - 两个执行器都不是真机：未接真实 AppID 与微信登录态，`code2session` 由平台桩替代（`openid` 为确定性桩值）。
 - 除 4 步浏览器点击 + 2 步官方模拟器外，其余 6 步走接口；这是为了让链条在无 UI 的存量模块上也能跑，全链路口径仍是一条用例串行。
-- 耗时基线：页面级 automator 5 次平均 24.18s（第 11 步约 20s 主要是开发者工具窗口启动与首屏编译）；
+- 耗时基线：页面级 automator 5 次平均 24.57s（第 11 步约 20s 主要是开发者工具窗口启动与首屏编译）；
   组件级 simulate 5 次平均 4.69s。均为本机 mock 数值，接入真实系统后需重新标定 10 分钟阈值。
 - `smoke_runs` 运行台账在清理后保留 1 行（含 `cleaned_at`），便于审计；12 张业务表为 0。
 

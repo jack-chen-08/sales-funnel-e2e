@@ -35,8 +35,10 @@ bash scripts/open_automator_port.sh                    # 显式打开自动化�
 
 ## 连续 5 次（AC1，页面级 automator）
 
-2026-11-24 14:39–14:42 用 `bash scripts/run_5x.sh --miniapp-executor automator` 连跑 5 次，5/5 通过，
-每次 12/12、清理残留 0、第 11/12 步执行器均为 `miniprogram-automator`，单次 23.81–24.87s（平均 24.18s）。
+2026-11-24 14:51–14:53 用 `bash scripts/run_5x.sh --miniapp-executor automator` 连跑 5 次，5/5 通过，
+每次 12/12、清理残留 0、第 11/12 步执行器均为 `miniprogram-automator`，单次 23.64–26.48s（平均 24.57s）。
+run_id：`smk-5x-r1-20261124-145119-2595`(26.48s) / `r2-145157-e059`(24.50s) / `r3-145234-b7e4`(24.47s) /
+`r4-145310-6cdc`(23.76s) / `r5-145345-a6e2`(23.64s)。
 每次的 4 张截图、`trace.json`、`requests.jsonl` 原样落在 `EVIDENCE/run_5x/run_{1..5}/artifacts/miniapp/`。
 
 ## 能力边界（如实，不回避）

@@ -1,6 +1,6 @@
 {
   "step": "签约企业联系人在小程序完成认证",
-  "run_id": "smk-5x-r2-20261124-144026-f594",
+  "run_id": "smk-5x-r2-20261124-145157-e059",
   "calls": [
     {
       "source": "miniapp",
@@ -9,33 +9,40 @@
       "status": 200,
       "response": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "ef69129a-f0f1-4fd2-bcc9-e02a4ca778f4",
+        "member_id": "86c00181-5bef-4760-96c4-a6fa6512a322",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
         "application_status": "certified",
-        "duration_ms": 26,
-        "at": 1795502446367
+        "duration_ms": 28,
+        "at": 1795503137641
       },
-      "duration_ms": 26
+      "duration_ms": 28
     },
     {
       "source": "miniapp",
       "method": "GET",
-      "path": "/api/miniapp/home?member_id=ef69129a-f0f1-4fd2-bcc9-e02a4ca778f4",
+      "path": "/api/miniapp/home?member_id=86c00181-5bef-4760-96c4-a6fa6512a322",
       "status": 200,
       "response": {
         "step": "小程序首页看到首月资源推荐",
-        "recommendation_id": "20183d77-9f11-4558-8b2c-c5f2bf8fd3d4",
-        "member_id": "ef69129a-f0f1-4fd2-bcc9-e02a4ca778f4",
+        "recommendation_id": "6cc2b57d-b82b-401b-a64a-50012feb0046",
+        "member_id": "86c00181-5bef-4760-96c4-a6fa6512a322",
         "month": "2026-11",
         "headline": "2026-11 首月资源包",
         "items": [
           {
-            "code": "RES-PRINT-500",
-            "name": "黑白打印 500 页",
-            "quota": 500,
-            "unit": "页",
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PARK-2",
+            "name": "固定车位 2 个",
+            "quota": 2,
+            "unit": "个",
             "source": "miniprogram-stub"
           },
           {
@@ -44,18 +51,11 @@
             "quota": 8,
             "unit": "次",
             "source": "miniprogram-stub"
-          },
-          {
-            "code": "RES-MEETING-4",
-            "name": "共享会议室 4 小时",
-            "quota": 4,
-            "unit": "小时",
-            "source": "miniprogram-stub"
           }
         ],
         "application_status": "activated"
       },
-      "duration_ms": 63
+      "duration_ms": 64
     }
   ],
   "ui": {}

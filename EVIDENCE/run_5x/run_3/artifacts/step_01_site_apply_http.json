@@ -1,12 +1,12 @@
 {
   "step": "官网提交申请",
-  "run_id": "smk-5x-r3-20261124-144102-afda",
+  "run_id": "smk-5x-r3-20261124-145234-b7e4",
   "calls": [
     {
       "method": "POST",
       "path": "/site/apply/submit",
       "request": {
-        "run_id": "smk-5x-r3-20261124-144102-afda",
+        "run_id": "smk-5x-r3-20261124-145234-b7e4",
         "company_name": "星澜数字科技（虚构）",
         "applicant_name": "林知远（虚构）",
         "applicant_phone": "13800000001",

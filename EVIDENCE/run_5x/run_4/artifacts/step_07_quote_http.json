@@ -1,26 +1,26 @@
 {
   "step": "9.5 折以内报价",
-  "run_id": "smk-5x-r4-20261124-144138-5860",
+  "run_id": "smk-5x-r4-20261124-145310-6cdc",
   "calls": [
     {
       "method": "POST",
       "path": "/api/quotes",
       "request": {
-        "room_id": "210e0715-a2ed-49f3-8711-b93190764b7f",
+        "room_id": "428ee7c8-2022-4221-86be-b07b6676a375",
         "discount_bp": 500
       },
       "status": 200,
       "response": {
         "step": "9.5 折以内报价",
-        "quote_id": "f0a69da2-66e0-4808-99fd-ca24366785fb",
-        "envelope_id": "cccd7c55-5009-4265-9643-3a28bb57f2f1",
-        "room_id": "210e0715-a2ed-49f3-8711-b93190764b7f",
+        "quote_id": "a6c5ea96-e8fa-4843-878b-9ebec0fe6ab9",
+        "envelope_id": "6115a36d-5b13-46e0-84d6-55cc66356ebd",
+        "room_id": "428ee7c8-2022-4221-86be-b07b6676a375",
         "list_price_cents": 1860000,
         "discount_bp": 500,
         "final_price_cents": 1767000,
         "application_status": "quoted"
       },
-      "elapsed_ms": 37.69
+      "elapsed_ms": 10.96
     }
   ],
   "ui": {}

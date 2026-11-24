@@ -1,6 +1,6 @@
 {
   "step": "前台核销访客码",
-  "run_id": "smk-5x-r3-20261124-144102-afda",
+  "run_id": "smk-5x-r3-20261124-145234-b7e4",
   "calls": [
     {
       "method": "FETCH",
@@ -8,21 +8,21 @@
       "status": 200,
       "response": {
         "step": "前台核销访客码",
-        "visit_id": "ecd6ca49-d24d-4a6f-b7b3-ca582a474e63",
+        "visit_id": "791bd128-4717-4cf2-88b6-432522a7b644",
         "status": "checked_in",
-        "checked_in_at": "2026-11-24T06:41:05.684166+00:00",
+        "checked_in_at": "2026-11-24T06:52:38.446012+00:00",
         "desk": "A 座前台",
         "application_status": "visited"
       }
     },
     {
       "method": "GET",
-      "path": "/api/admin/run/smk-5x-r3-20261124-144102-afda/state",
+      "path": "/api/admin/run/smk-5x-r3-20261124-145234-b7e4/state",
       "request": null,
       "status": 200,
       "response": {
-        "run_id": "smk-5x-r3-20261124-144102-afda",
-        "application_id": "2538ed38-d209-45b3-8ca6-1dc9b28c3720",
+        "run_id": "smk-5x-r3-20261124-145234-b7e4",
+        "application_id": "24dae496-6f87-4d24-813f-9a54f91a0c6e",
         "status": "visited",
         "company_name": "星澜数字科技（虚构）",
         "events": [
@@ -31,7 +31,7 @@
             "step_key": "site_apply",
             "event": "site_apply:ok",
             "payload": {
-              "application_id": "2538ed38-d209-45b3-8ca6-1dc9b28c3720",
+              "application_id": "24dae496-6f87-4d24-813f-9a54f91a0c6e",
               "company_name": "星澜数字科技（虚构）"
             }
           },
@@ -40,7 +40,7 @@
             "step_key": "lead_assign",
             "event": "lead_assign:ok",
             "payload": {
-              "lead_id": "c5df9c1e-e05d-4ce4-bc17-3d72d48eaa94",
+              "lead_id": "b47a3f35-9a72-4193-b9ea-db701dfd4825",
               "advisor_id": "ADV-101",
               "rule": "region=east->ADV-101"
             }
@@ -50,7 +50,7 @@
             "step_key": "first_contact",
             "event": "first_contact:ok",
             "payload": {
-              "contact_id": "dd1e67a3-6609-4e7f-be39-d646960c4ebf",
+              "contact_id": "5edcc618-1158-4285-bfdc-a40c2a540c79",
               "channel": "phone"
             }
           },
@@ -59,8 +59,8 @@
             "step_key": "book_visit",
             "event": "book_visit:ok",
             "payload": {
-              "visit_id": "ecd6ca49-d24d-4a6f-b7b3-ca582a474e63",
-              "visit_code": "971946"
+              "visit_id": "791bd128-4717-4cf2-88b6-432522a7b644",
+              "visit_code": "511389"
             }
           },
           {
@@ -68,13 +68,13 @@
             "step_key": "visitor_checkin",
             "event": "visitor_checkin:ok",
             "payload": {
-              "visit_id": "ecd6ca49-d24d-4a6f-b7b3-ca582a474e63",
+              "visit_id": "791bd128-4717-4cf2-88b6-432522a7b644",
               "desk": "A 座前台"
             }
           }
         ]
       },
-      "elapsed_ms": 6.47
+      "elapsed_ms": 11.29
     }
   ],
   "ui": {}
