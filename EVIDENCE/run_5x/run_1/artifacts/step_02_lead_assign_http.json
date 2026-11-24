@@ -1,6 +1,6 @@
 {
   "step": "线索按规则分配",
-  "run_id": "smk-5x-r1-20261124-033650-4ec2",
+  "run_id": "smk-5x-r1-20261124-142831-aa52",
   "calls": [
     {
       "method": "POST",
@@ -10,35 +10,35 @@
       },
       "status": 200,
       "response": {
-        "run_id": "smk-5x-r1-20261124-033650-4ec2",
+        "run_id": "smk-5x-r1-20261124-142831-aa52",
         "rooms": [
           {
-            "room_id": "ab648b1f-51f4-490e-a08c-0f0743c6d797",
+            "room_id": "e0eaf213-34de-4495-befc-68baa89c0210",
             "room_no": "12F-1801"
           },
           {
-            "room_id": "45337764-bd32-4d99-a8cf-095187e0bd21",
+            "room_id": "75c2fdef-ad88-4373-bb46-09b7a1cd7a6a",
             "room_no": "12F-1802"
           }
         ]
       },
-      "elapsed_ms": 20.95
+      "elapsed_ms": 14.22
     },
     {
       "method": "POST",
       "path": "/api/leads/assign",
       "request": {
-        "application_id": "9ea75949-1d50-4c8f-bdc6-99a5439ad4ca"
+        "application_id": "58a887ef-5c3f-4d86-ac3e-8bb72d66f757"
       },
       "status": 200,
       "response": {
         "step": "线索按规则分配",
-        "lead_id": "dc41da85-93ed-460e-8ba5-3f119b270999",
+        "lead_id": "462cc1a3-b643-4af7-b1e7-082520fb45d2",
         "advisor_id": "ADV-101",
         "assign_rule": "region=east->ADV-101",
         "application_status": "assigned"
       },
-      "elapsed_ms": 9.88
+      "elapsed_ms": 11.02
     }
   ],
   "ui": {}

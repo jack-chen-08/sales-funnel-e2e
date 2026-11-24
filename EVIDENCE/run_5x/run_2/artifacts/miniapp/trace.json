@@ -1,11 +1,11 @@
 {
   "tool": "miniprogram-simulate",
   "note": "Node 端微信官方小程序模拟器；真实渲染树 + 真实事件 + 真实 HTTP 出网。非真机、无像素截图、无微信登录态。",
-  "startedAt": "2026-11-23T19:37:00.114Z",
-  "endedAt": "2026-11-23T19:37:00.348Z",
+  "startedAt": "2026-11-24T06:28:41.353Z",
+  "endedAt": "2026-11-24T06:28:41.588Z",
   "baseUrl": "http://127.0.0.1:5600",
-  "memberId": "9ed42eb8-d65f-4907-9841-1934007542bd",
-  "runId": "smk-5x-r2-20261124-033655-33ba",
+  "memberId": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
+  "runId": "smk-5x-r2-20261124-142837-e421",
   "verifyCode": "123456",
   "steps": [
     {
@@ -23,7 +23,7 @@
     {
       "stage": "home",
       "phase": "home",
-      "domSha256": "cb0d14edb3fcffec6b398ad940772d137bd2d9f8d5857c554ed1efd53a2bb932",
+      "domSha256": "3e29f780ee22aea1f691f4a1bfee904689635f7a9151e5a1b35d81669f3beb83",
       "domBytes": 2285
     }
   ],
@@ -33,11 +33,12 @@
       "name": "certified",
       "detail": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
-        "application_status": "certified"
+        "application_status": "certified",
+        "duration_ms": 25
       }
     },
     {
@@ -45,11 +46,18 @@
       "name": "home-ready",
       "detail": {
         "step": "小程序首页看到首月资源推荐",
-        "recommendation_id": "cff4ca4f-839b-4f03-908f-594c03f49b46",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "recommendation_id": "9b0ba13d-6c6e-49d0-8d38-2d95cfac70ae",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "month": "2026-11",
         "headline": "2026-11 首月资源包",
         "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
           {
             "code": "RES-LOUNGE-8",
             "name": "洽谈区使用 8 次",
@@ -62,13 +70,6 @@
             "name": "黑白打印 500 页",
             "quota": 500,
             "unit": "页",
-            "source": "miniprogram-stub"
-          },
-          {
-            "code": "RES-MEETING-4",
-            "name": "共享会议室 4 小时",
-            "quota": 4,
-            "unit": "小时",
             "source": "miniprogram-stub"
           }
         ],
@@ -79,48 +80,55 @@
   "requests": [
     {
       "seq": 1,
-      "at": "2026-11-23T19:37:00.250Z",
+      "at": "2026-11-24T06:28:41.490Z",
       "method": "POST",
       "url": "http://127.0.0.1:5600/api/miniapp/certify",
       "path": "/api/miniapp/certify",
       "requestHeaders": {
         "content-type": "application/json",
-        "x-run-id": "smk-5x-r2-20261124-033655-33ba"
+        "x-run-id": "smk-5x-r2-20261124-142837-e421"
       },
       "requestBody": {
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "verify_code": "123456"
       },
       "statusCode": 200,
       "responseBody": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
         "application_status": "certified"
       },
-      "durationMs": 20
+      "durationMs": 18
     },
     {
       "seq": 2,
-      "at": "2026-11-23T19:37:00.300Z",
+      "at": "2026-11-24T06:28:41.539Z",
       "method": "GET",
-      "url": "http://127.0.0.1:5600/api/miniapp/home?member_id=9ed42eb8-d65f-4907-9841-1934007542bd",
-      "path": "/api/miniapp/home?member_id=9ed42eb8-d65f-4907-9841-1934007542bd",
+      "url": "http://127.0.0.1:5600/api/miniapp/home?member_id=d70f2e1e-f71b-442f-8819-d6ee1362db31",
+      "path": "/api/miniapp/home?member_id=d70f2e1e-f71b-442f-8819-d6ee1362db31",
       "requestHeaders": {
         "content-type": "application/json",
-        "x-run-id": "smk-5x-r2-20261124-033655-33ba"
+        "x-run-id": "smk-5x-r2-20261124-142837-e421"
       },
       "requestBody": null,
       "statusCode": 200,
       "responseBody": {
         "step": "小程序首页看到首月资源推荐",
-        "recommendation_id": "cff4ca4f-839b-4f03-908f-594c03f49b46",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "recommendation_id": "9b0ba13d-6c6e-49d0-8d38-2d95cfac70ae",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "month": "2026-11",
         "headline": "2026-11 首月资源包",
         "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
           {
             "code": "RES-LOUNGE-8",
             "name": "洽谈区使用 8 次",
@@ -133,13 +141,6 @@
             "name": "黑白打印 500 页",
             "quota": 500,
             "unit": "页",
-            "source": "miniprogram-stub"
-          },
-          {
-            "code": "RES-MEETING-4",
-            "name": "共享会议室 4 小时",
-            "quota": 4,
-            "unit": "小时",
             "source": "miniprogram-stub"
           }
         ],
@@ -179,7 +180,7 @@
       "ok": true,
       "detail": {
         "content-type": "application/json",
-        "x-run-id": "smk-5x-r2-20261124-033655-33ba"
+        "x-run-id": "smk-5x-r2-20261124-142837-e421"
       }
     },
     {
@@ -192,7 +193,7 @@
       "ok": true,
       "detail": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
@@ -224,7 +225,7 @@
     {
       "name": "第 12 步向平台发起真实 HTTP 请求 GET /api/miniapp/home",
       "ok": true,
-      "detail": "/api/miniapp/home?member_id=9ed42eb8-d65f-4907-9841-1934007542bd"
+      "detail": "/api/miniapp/home?member_id=d70f2e1e-f71b-442f-8819-d6ee1362db31"
     },
     {
       "name": "首页接口返回 200",
@@ -245,9 +246,9 @@
       "name": "每条资源配额为正数",
       "ok": true,
       "detail": [
+        4,
         8,
-        500,
-        4
+        500
       ]
     },
     {

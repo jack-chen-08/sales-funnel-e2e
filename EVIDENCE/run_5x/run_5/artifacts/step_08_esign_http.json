@@ -1,6 +1,6 @@
 {
   "step": "电子签",
-  "run_id": "smk-5x-r5-20261124-033710-2a82",
+  "run_id": "smk-5x-r5-20261124-142852-9edd",
   "calls": [
     {
       "method": "FETCH",
@@ -8,20 +8,20 @@
       "status": 200,
       "response": {
         "step": "电子签",
-        "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa",
-        "envelope_no": "ESN-B89CE0A34F",
+        "envelope_id": "0c7f04c0-9d10-4226-97b8-9ec40da0773c",
+        "envelope_no": "ESN-8A97B3B05F",
         "envelope_status": "signed",
         "signers": [
           {
             "party": "landlord",
             "name": "园区运营主体（虚构）",
-            "signed_at": "2026-11-23T19:37:14.175928+00:00",
+            "signed_at": "2026-11-24T06:28:55.862252+00:00",
             "result": "signed"
           },
           {
             "party": "tenant",
             "name": "星澜数字科技（虚构） / 林知远（虚构）",
-            "signed_at": "2026-11-23T19:37:14.175928+00:00",
+            "signed_at": "2026-11-24T06:28:55.862252+00:00",
             "result": "signed"
           }
         ],
@@ -30,12 +30,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/admin/run/smk-5x-r5-20261124-033710-2a82/state",
+      "path": "/api/admin/run/smk-5x-r5-20261124-142852-9edd/state",
       "request": null,
       "status": 200,
       "response": {
-        "run_id": "smk-5x-r5-20261124-033710-2a82",
-        "application_id": "7dc64ce6-5552-4ad5-8c34-4af070af2554",
+        "run_id": "smk-5x-r5-20261124-142852-9edd",
+        "application_id": "ae4a7090-5368-4d15-8c67-905ab2210793",
         "status": "signed",
         "company_name": "星澜数字科技（虚构）",
         "events": [
@@ -44,7 +44,7 @@
             "step_key": "site_apply",
             "event": "site_apply:ok",
             "payload": {
-              "application_id": "7dc64ce6-5552-4ad5-8c34-4af070af2554",
+              "application_id": "ae4a7090-5368-4d15-8c67-905ab2210793",
               "company_name": "星澜数字科技（虚构）"
             }
           },
@@ -53,7 +53,7 @@
             "step_key": "lead_assign",
             "event": "lead_assign:ok",
             "payload": {
-              "lead_id": "c77f651f-0eb9-44af-96d9-7ce882bb1803",
+              "lead_id": "a31b171d-600f-4479-935e-f105ea335e1a",
               "advisor_id": "ADV-101",
               "rule": "region=east->ADV-101"
             }
@@ -63,7 +63,7 @@
             "step_key": "first_contact",
             "event": "first_contact:ok",
             "payload": {
-              "contact_id": "a975594d-5dd9-46c5-b201-d809636d6318",
+              "contact_id": "67b8b89a-ec14-4662-897e-fc51ff148fc4",
               "channel": "phone"
             }
           },
@@ -72,8 +72,8 @@
             "step_key": "book_visit",
             "event": "book_visit:ok",
             "payload": {
-              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2",
-              "visit_code": "621057"
+              "visit_id": "690f87f4-86d5-47e7-b8cc-555ff9f2c405",
+              "visit_code": "691436"
             }
           },
           {
@@ -81,7 +81,7 @@
             "step_key": "visitor_checkin",
             "event": "visitor_checkin:ok",
             "payload": {
-              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2",
+              "visit_id": "690f87f4-86d5-47e7-b8cc-555ff9f2c405",
               "desk": "A 座前台"
             }
           },
@@ -90,8 +90,8 @@
             "step_key": "minutes_confirm",
             "event": "minutes_confirm:ok",
             "payload": {
-              "minutes_id": "8fed7576-0c02-490a-852a-66bb208b4617",
-              "visit_id": "836143d6-3775-4865-864b-8e208ec2c0a2"
+              "minutes_id": "3c8f86bc-9276-4897-bb3f-c40b39deef25",
+              "visit_id": "690f87f4-86d5-47e7-b8cc-555ff9f2c405"
             }
           },
           {
@@ -99,10 +99,10 @@
             "step_key": "quote",
             "event": "quote:ok",
             "payload": {
-              "quote_id": "404950d0-accc-4531-809c-d14212be0785",
+              "quote_id": "f19543a7-ff1b-4e45-b3c9-7639a686a47f",
               "final_price_cents": 1767000,
               "discount_bp": 500,
-              "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa"
+              "envelope_id": "0c7f04c0-9d10-4226-97b8-9ec40da0773c"
             }
           },
           {
@@ -110,13 +110,13 @@
             "step_key": "esign",
             "event": "esign:ok",
             "payload": {
-              "envelope_id": "325178e5-04ff-4aae-827b-a9dc0ff425fa",
-              "envelope_no": "ESN-B89CE0A34F"
+              "envelope_id": "0c7f04c0-9d10-4226-97b8-9ec40da0773c",
+              "envelope_no": "ESN-8A97B3B05F"
             }
           }
         ]
       },
-      "elapsed_ms": 33.21
+      "elapsed_ms": 6.08
     }
   ],
   "ui": {}

@@ -34,15 +34,15 @@
 ```
 | 次数 | run_id | 结果 | 通过 | 总耗时(s) | 清理后残留 | 小程序两步 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | smk-5x-r1-20261124-033650-4ec2 | passed | 12/12 | 4.56 | 0 | miniprogram-simulate 执行 |
-| 2 | smk-5x-r2-20261124-033655-33ba | passed | 12/12 | 4.51 | 0 | miniprogram-simulate 执行 |
-| 3 | smk-5x-r3-20261124-033700-1ab8 | passed | 12/12 | 4.46 | 0 | miniprogram-simulate 执行 |
-| 4 | smk-5x-r4-20261124-033705-7779 | passed | 12/12 | 4.49 | 0 | miniprogram-simulate 执行 |
-| 5 | smk-5x-r5-20261124-033710-2a82 | passed | 12/12 | 4.49 | 0 | miniprogram-simulate 执行 |
+| 1 | smk-5x-r1-20261124-142831-aa52 | passed | 12/12 | 5.13 | 0 | miniprogram-simulate 执行 |
+| 2 | smk-5x-r2-20261124-142837-e421 | passed | 12/12 | 4.57 | 0 | miniprogram-simulate 执行 |
+| 3 | smk-5x-r3-20261124-142842-6188 | passed | 12/12 | 4.57 | 0 | miniprogram-simulate 执行 |
+| 4 | smk-5x-r4-20261124-142847-54bd | passed | 12/12 | 4.54 | 0 | miniprogram-simulate 执行 |
+| 5 | smk-5x-r5-20261124-142852-9edd | passed | 12/12 | 4.64 | 0 | miniprogram-simulate 执行 |
 
 通过次数：5/5
-平均耗时：4.50s（上限 600s）
-最长单次：4.56s
+平均耗时：4.69s（上限 600s）
+最长单次：5.13s
 ```
 
 > 微信官方模拟器接入后单次耗时由 3.67s 升至约 4.5s（+0.8s 为 Node 侧装载/编译组件与两次真实 HTTP 往返）。
@@ -123,7 +123,7 @@ run_id：smk-skipmode-20261124-035335-043d
 
 ## 4. 已知短板
 
-- 小程序两步（11/12）由微信官方 `miniprogram-simulate` 执行**组件级真跑**：官方编译器编译仓库内真实 WXML/WXSS，组件内 `wx.request` 经 Node http 桥接、经 loopback（`127.0.0.1:5600`）打到本仓自起的 mock 平台（不出公网），21 条断言全 PASS。**未覆盖**：`pages/entry` 页面壳与 `app.json` 路由（`wx.navigateTo` 未执行，simulate 不支持路由）、像素截图、微信登录态（`code2session` 为桩）。要补页面级/真机级，需微信开发者工具 + `miniprogram-automator`（AppID + 扫码，属外部条件）；`--skip-miniprogram` 与 `skip_mini` 标记逻辑不受影响。
+- 小程序两步（11/12）有**两个执行器**：①**页面级（主）**——微信开发者工具 + 官方 `miniprogram-automator`，走真实页面 `pages/entry/index`、真实 `<input>`/`<button>`、真实 `wx.navigateTo` 到 `pages/home/index`，带 4 张像素截图与 13 条断言（证据 `EVIDENCE/miniprogram/automator/`，运行 `smk-auto14-20261124-142939-a30c`）；②**组件级（CI 默认）**——`miniprogram-simulate`，官方编译器编译仓库内真实 WXML/WXSS，不含页面壳与路由（证据 `EVIDENCE/miniprogram/`）。两者共同边界：非真机（未安装到手机）、`code2session` 由平台桩替代（`openid` 为 `wx_stub_*`）、未走真实短信（验证码 `123456` 为平台桩校验码）。
 - 12 步中 **4 步为真实浏览器**（1 官网申请、3 顾问首次联系、5 前台核销、8 电子签）+ **2 步官方模拟器组件级**（11/12），其余 6 步（2/4/6/7/9/10）走接口，属 mock 平台内部 API，非真实下游系统。
 - 电子签、小程序、房态、会员档案均为 mock/桩，接入真实系统需按 `app/stubs.py` 顶部「对接点」替换，并重新标定 10 分钟阈值（当前 4.5s 只代表本机 mock）。
 - 单机串行执行，未做并发/多环境矩阵；`run_5x.sh` 仅顺序连跑 5 次。
@@ -132,7 +132,7 @@ run_id：smk-skipmode-20261124-035335-043d
 
 | # | 上一轮意见 | 本轮状态 | 落地位置 / 验证 |
 | --- | --- | --- | --- |
-| 1 | 自动化脚本不可直接执行（指向的小程序项目不存在、未产出 trace/截图/请求响应） | **已闭环（组件级；页面级未覆盖）** | ①仓库内已有可跑小程序工程 `miniapp/`（`app.js`/`app.json`/`app.wxss`/`pages/entry`/`components/member-entry`）；②`scripts/miniapp_smoke.js` 一条命令驱动两步，产出 trace／三阶段渲染树／真实请求响应／21 条断言；③`EVIDENCE/miniprogram/`（7 文件 = 6 份运行产物 + README，一次运行原样落盘）+ `EVIDENCE/run_5x/run_{1..5}/artifacts/miniapp/`（5 次连跑各一份）；④`pytest -m chain` 中 11/12 步实测 `mode=miniapp`、`status=passed`。能力边界见 `EVIDENCE/miniprogram/README.md`。 |
+| 1 | 自动化脚本不可直接执行（指向的小程序项目不存在、未产出 trace/截图/请求响应） | **已闭环（页面级 + 组件级双执行器）** | ①仓库内已有可跑小程序工程 `miniapp/`（`app.js`/`app.json`/`app.wxss`/`pages/entry`/`components/member-entry`）；②`scripts/miniapp_smoke.js` 一条命令驱动两步，产出 trace／三阶段渲染树／真实请求响应／21 条断言；③`EVIDENCE/miniprogram/`（7 文件 = 6 份运行产物 + README，一次运行原样落盘）+ `EVIDENCE/run_5x/run_{1..5}/artifacts/miniapp/`（5 次连跑各一份）；④`pytest -m chain` 中 11/12 步实测 `mode=miniapp`、`status=passed`；⑤页面级证据 `EVIDENCE/miniprogram/automator/`（开发者工具 + `miniprogram-automator`，真实页面/输入/点击/路由 + 4 张截图，`smk-auto14-20261124-142939-a30c`，13 断言 0 失败）。能力边界见 `EVIDENCE/miniprogram/README.md` 与 `automator/RUN.md`。 |
 | 2 | 小程序两步只能靠命令行开关跳过，无 pytest 标记 | **已闭环** | `pytest.ini` 注册 `skip_mini`；`tests/conftest.py` 的 `skip_miniprogram` 同时认命令行开关与该标记；新增用例 `test_skip_mini_marker_skips_steps_11_12`，实测通过（10 步 passed、11/12 记 skipped、清理残留 0）。 |
 | 3 | 缺 CI 配置与夜间定时 | **已闭环（GitHub Actions 已首跑 success）** | `.github/workflows/smoke.yml`：push main / PR / 手动 / 每日 18:00 UTC（02:00 UTC+8）；PostgreSQL 16 service → Alembic → 起平台等 `/healthz` → 跑 10 步 → 报告与 `EVIDENCE/` 上传 artifact。命令序列与本地已验证流程逐条对应；首次运行已于 `3d0c490` 上 **success**（118 秒，https://github.com/jack-chen-08/sales-funnel-e2e/actions/runs/45255958600 ）。 |
 | 4 | 文档里的测试名与错误码跟代码对不上 | **已闭环** | 文档只引用真实存在的用例名（4 条）；报价折扣的政策上限错误码统一为 `DISCOUNT_EXCEEDS_POLICY`（`app/main.py:459`），不再出现旧名 `BELOW_FLOOR_*`。 |

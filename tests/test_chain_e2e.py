@@ -17,20 +17,34 @@ FULL_STEP_COUNT = 12
 SKIP_STEP_COUNT = 10
 DURATION_LIMIT_MS = 600_000
 
+# 执行器 → trace 里的 tool 标识 / 证据文件（页面级 automator 出截图，组件级 simulate 出渲染树）
+EXECUTOR_TOOL = {"automator": "miniprogram-automator", "simulate": "miniprogram-simulate"}
+
 
 def _report_path(report: dict) -> Path:
     return ROOT / "reports" / f"run_{report['run_id']}.json"
 
 
 @pytest.mark.chain
-def test_recruitment_chain_all_12_steps(base_url, make_run_id, skip_miniprogram, headless, miniapp_ready):
-    """AC1：12 步链式用例按顺序全部通过，总耗时不超过 10 分钟，结束后 run_id 数据清零（AC3）。"""
+def test_recruitment_chain_all_12_steps(
+    base_url, make_run_id, skip_miniprogram, headless, miniapp_ready, miniapp_executor
+):
+    """AC1：12 步链式用例按顺序全部通过，总耗时不超过 10 分钟，结束后 run_id 数据清零（AC3）。
+
+    小程序两步（11、12）由 miniapp_executor 指定的执行器真实执行：
+    automator = 页面级（订单指定框架，真实页面 + 真实路由 + 真实节点），simulate = 组件级补充。
+    """
     if not skip_miniprogram and not miniapp_ready[0]:
         pytest.skip(f"小程序两步无法真实执行，本用例不做接口桩降级：{miniapp_ready[1]}")
 
     run_id = make_run_id("chain")
     runner, report, failure = run_chain(
-        base_url, run_id, skip_miniprogram=skip_miniprogram, headless=headless, scenario="chain"
+        base_url,
+        run_id,
+        skip_miniprogram=skip_miniprogram,
+        headless=headless,
+        scenario="chain",
+        miniapp_executor=miniapp_ready[2] or miniapp_executor,
     )
 
     assert failure is None, f"链路失败：{failure}（证据：{failure.artifacts if failure else {}}）"
@@ -61,16 +75,22 @@ def test_recruitment_chain_all_12_steps(base_url, make_run_id, skip_miniprogram,
                 continue
             # 仓内既有约定：报告里步骤证据为 {"evidence": {...}} 结构
             payload = step["evidence"].get("evidence", {})
-            assert payload.get("executor") == "miniprogram-simulate", (
-                f"步骤 {step['no']} 未由小程序模拟器执行：{payload.get('executor')}"
+            expected_tool = EXECUTOR_TOOL[report["miniapp_executor"]]
+            assert payload.get("executor") == expected_tool, (
+                f"步骤 {step['no']} 执行器不符：{payload.get('executor')}（应为 {expected_tool}）"
             )
             assert payload.get("request", {}).get("statusCode") == 200, f"步骤 {step['no']} 请求未成功"
-            assert payload.get("dom_sha256"), f"步骤 {step['no']} 缺少渲染树哈希"
+            assert payload.get("dom_sha256"), f"步骤 {step['no']} 缺少渲染树/页面数据哈希"
             assert payload.get("events"), f"步骤 {step['no']} 缺少交互事件序列"
             assert payload.get("component_phase") == expected_phase[step["no"]], (
-                f"步骤 {step['no']} 组件阶段异常：{payload.get('component_phase')}"
+                f"步骤 {step['no']} 页面阶段异常：{payload.get('component_phase')}"
             )
-            for key in ("miniapp_trace", "miniapp_summary", "render_after_home"):
+            keys = ["miniapp_trace", "miniapp_summary", "miniapp_requests"]
+            if report["miniapp_executor"] == "automator":
+                keys += ["screenshot_entry", "screenshot_home"]
+            else:
+                keys += ["render_after_home"]
+            for key in keys:
                 artifact = ROOT / step["artifacts"][key]
                 assert artifact.exists() and artifact.stat().st_size > 0, f"小程序证据文件缺失：{artifact}"
 

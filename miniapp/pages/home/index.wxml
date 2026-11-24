@@ -1,0 +1,30 @@
+<!--
+  小程序首页：首月资源推荐（第 12 步断言目标）。
+  条目全部由 GET /api/miniapp/home 的真实响应渲染而来。
+-->
+<view class="home-page">
+  <view class="page-meta">
+    <text class="page-path">pages/home/index</text>
+    <text class="page-phase" data-phase="{{phase}}">页面阶段：{{phase}}</text>
+  </view>
+
+  <view class="card home" wx:if="{{phase === 'home'}}">
+    <view class="card-title headline">{{headline}}</view>
+    <view class="month" data-month="{{month}}">资源月份：{{month}}</view>
+    <view class="item resource-item" wx:for="{{items}}" wx:key="code"
+          data-code="{{item.code}}" data-quota="{{item.quota}}">
+      <text class="item-name">{{item.name}}</text>
+      <text class="item-quota">配额 {{item.quota}}{{item.unit}}</text>
+    </view>
+    <view class="item-count" data-count="{{items.length}}">共 {{items.length}} 项资源</view>
+    <view class="app-status" data-status="{{applicationStatus}}">链路状态：{{applicationStatus}}</view>
+  </view>
+
+  <view class="loading" wx:if="{{phase === 'loading'}}">首月资源加载中…</view>
+  <view class="error" wx:if="{{phase === 'error'}}">{{errorMsg}}</view>
+
+  <view class="evlog" wx:if="{{events.length}}">
+    <text class="evlog-title">页面事件（{{events.length}}）</text>
+    <text class="evlog-item" wx:for="{{events}}" wx:key="seq">{{item.seq}}.{{item.name}}</text>
+  </view>
+</view>

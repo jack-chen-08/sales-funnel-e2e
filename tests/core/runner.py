@@ -90,6 +90,7 @@ class ChainRunner:
         artifacts_dir: Path | None = None,
         scenario: str = "chain",
         miniapp_dir: Path | None = None,
+        miniapp_executor: str = "auto",
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.run_id = run_id
@@ -121,6 +122,10 @@ class ChainRunner:
         self._miniapp_trace: dict[str, Any] | None = None
         self._miniapp_artifacts: dict[str, str] = {}
         self.miniapp_dir = Path(miniapp_dir) if miniapp_dir else self.artifacts_dir / "miniapp"
+        # 小程序执行器：auto（有开发者工具走 automator，否则回退 simulate）/ automator / simulate
+        self.miniapp_executor_requested = (miniapp_executor or "auto").strip().lower()
+        self.miniapp_executor: str | None = None
+        self.miniapp_executor_fallback = ""
 
     # ------------------------------------------------------------------ 生命周期
 
@@ -523,10 +528,39 @@ class ChainRunner:
     # ------------------------------------------------------------------ 小程序两步
 
     def _miniapp_session(self) -> dict[str, Any]:
-        """执行（或复用）小程序会话：真实渲染 + 真实事件 + 真实 HTTP 出网。"""
+        """执行（或复用）小程序会话：真实渲染 + 真实事件 + 真实 HTTP 出网。
+
+        执行器由 miniapp.resolve() 决定：auto 优先 automator（页面级，订单指定框架），
+        开发者工具不可用时回退 simulate（组件级补充），回退原因写入报告。
+        """
         if self._miniapp_trace is not None:
             return self._miniapp_trace
-        trace = miniapp.run(self.base_url, self.run_id, self.created["member_id"], self.miniapp_dir)
+        executor, reason, fallback = miniapp.resolve(self.miniapp_executor_requested)
+        if executor is None:
+            raise ChainFailure(
+                StepResult(
+                    no=11,
+                    key="miniapp_certify",
+                    name="签约企业联系人在小程序完成认证",
+                    actor="企业联系人",
+                    mode="miniapp",
+                    status="failed",
+                    started_at=_utcnow().isoformat(),
+                    ended_at=_utcnow().isoformat(),
+                    duration_ms=0.0,
+                ),
+                f"小程序执行器不可用：{reason}",
+                {},
+            )
+        self.miniapp_executor = executor
+        self.miniapp_executor_fallback = fallback
+        trace = miniapp.run(
+            self.base_url,
+            self.run_id,
+            self.created["member_id"],
+            self.miniapp_dir,
+            executor=executor,
+        )
         self._miniapp_trace = trace
 
         # 小程序内发出的真实请求并入本步 HTTP 证据文件
@@ -545,10 +579,24 @@ class ChainRunner:
             "miniapp_trace": miniapp.rel(self.miniapp_dir / "trace.json"),
             "miniapp_summary": miniapp.rel(self.miniapp_dir / "summary.md"),
             "miniapp_requests": miniapp.rel(self.miniapp_dir / "requests.jsonl"),
-            "render_initial": miniapp.rel(self.miniapp_dir / "01_initial_render.html"),
-            "render_after_certify": miniapp.rel(self.miniapp_dir / "02_after_certify.html"),
-            "render_after_home": miniapp.rel(self.miniapp_dir / "03_after_home.html"),
         }
+        if executor == "automator":
+            self._miniapp_artifacts.update(
+                {
+                    "screenshot_entry": miniapp.rel(self.miniapp_dir / "01_entry.png"),
+                    "screenshot_certified": miniapp.rel(self.miniapp_dir / "01b_entry_certified.png"),
+                    "screenshot_home": miniapp.rel(self.miniapp_dir / "02_home.png"),
+                    "screenshot_home_full": miniapp.rel(self.miniapp_dir / "03_home_full.png"),
+                }
+            )
+        else:
+            self._miniapp_artifacts.update(
+                {
+                    "render_initial": miniapp.rel(self.miniapp_dir / "01_initial_render.html"),
+                    "render_after_certify": miniapp.rel(self.miniapp_dir / "02_after_certify.html"),
+                    "render_after_home": miniapp.rel(self.miniapp_dir / "03_after_home.html"),
+                }
+            )
         return trace
 
     @staticmethod
@@ -565,29 +613,52 @@ class ChainRunner:
         body = call.get("responseBody") or {}
         self._assert(call["method"] == "POST", f"认证应为 POST，实际 {call['method']}")
         self._assert(call["statusCode"] == 200, f"认证接口应返回 200，实际 {call['statusCode']}")
-        self._assert(
-            (call.get("requestHeaders") or {}).get("x-run-id") == self.run_id,
-            "小程序请求必须携带本次 run 的 x-run-id（数据隔离）",
-        )
+        if trace.get("tool") == "miniprogram-automator":
+            # automator 在开发者工具运行时内发请求，HTTP 头无法代扣；改由服务端 audit 反证：
+            # 端点以 member.run_id 校验 run_id，缺少/错配 x-run-id 会 404 且不会推进链路。
+            audit = (trace.get("serverAudit") or {}).get("certify") or {}
+            self._assert(audit.get("step_key") == "miniapp_certify", f"服务端未记录第 11 步 audit：{audit}")
+            self._assert(
+                str((audit.get("payload") or {}).get("member_id", "")) == str(self.created["member_id"]),
+                "服务端 audit 的 member_id 与本次 run 不一致，说明 x-run-id 未生效",
+            )
+        else:
+            self._assert(
+                (call.get("requestHeaders") or {}).get("x-run-id") == self.run_id,
+                "小程序请求必须携带本次 run 的 x-run-id（数据隔离）",
+            )
         self._assert(body.get("certify_status") == "certified", f"认证状态应为 certified，实际 {body.get('certify_status')}")
         self._assert(str(body.get("openid_stub", "")).startswith("wx_stub_"), f"小程序桩返回异常：{body.get('openid_stub')}")
         self._assert(body.get("application_status") == "certified", f"状态应为 certified，实际 {body.get('application_status')}")
 
-        phases = {step["stage"]: step["phase"] for step in trace.get("steps", [])}
+        phases = {step["stage"]: step.get("phase") for step in trace.get("steps", [])}
         self._assert(phases.get("certify") == "certified", f"小程序组件认证后 phase 应为 certified，实际 {phases.get('certify')}")
+        expected_event = "page.certified" if trace.get("tool") == "miniprogram-automator" else "certified"
         self._assert(
-            any(e.get("name") == "certified" for e in trace.get("events", [])),
-            "小程序组件未触发 certified 事件",
+            any(e.get("name") == expected_event for e in trace.get("events", [])),
+            f"小程序未触发 {expected_event} 事件",
         )
+        entry_step = next((s for s in trace.get("steps", []) if s["stage"] == "entry"), {})
+        if trace.get("tool") == "miniprogram-automator":
+            self._assert(
+                entry_step.get("pagePath") == "/pages/entry/index",
+                f"小程序应从 pages/entry/index 进入，实际 {entry_step.get('pagePath')}",
+            )
+            self._assert(
+                (trace.get("screenshots") or {}).get("certify", {}).get("ok") is True,
+                "automator 未产出认证后截图",
+            )
         return {
             "assertion": (
                 "小程序内提交验证码完成企业联系人认证："
                 f"POST /api/miniapp/certify → 200（{call.get('durationMs')}ms），"
-                "组件 phase=idle→certified，触发 certified 事件，状态=certified"
+                "页面 pages/entry/index 上真实输入并点击提交，phase=idle→certified，"
+                "触发 certified 事件，状态=certified"
             ),
             "evidence": {
                 "executor": trace.get("tool"),
                 "executor_note": trace.get("note"),
+                "entry_page": entry_step.get("pagePath"),
                 "request": {k: call.get(k) for k in ("method", "path", "statusCode", "durationMs")},
                 "response": body,
                 "component_phase": phases.get("certify"),
@@ -610,21 +681,45 @@ class ChainRunner:
         self._assert(all(item.get("quota", 0) > 0 for item in body.get("items", [])), "推荐资源配额必须为正数")
         self._assert(body.get("application_status") == "activated", f"状态应为 activated，实际 {body.get('application_status')}")
 
-        phases = {step["stage"]: step["phase"] for step in trace.get("steps", [])}
+        phases = {step["stage"]: step.get("phase") for step in trace.get("steps", [])}
         self._assert(phases.get("home") == "home", f"小程序组件首页后 phase 应为 home，实际 {phases.get('home')}")
+        expected_event = "page.home.ok" if trace.get("tool") == "miniprogram-automator" else "home-ready"
         self._assert(
-            any(e.get("name") == "home-ready" for e in trace.get("events", [])),
-            "小程序组件未触发 home-ready 事件",
+            any(e.get("name") == expected_event for e in trace.get("events", [])),
+            f"小程序未触发 {expected_event} 事件",
         )
+
+        home_step = next((s for s in trace.get("steps", []) if s["stage"] == "home"), {})
+        rendered = trace.get("rendered") or {}
+        if trace.get("tool") == "miniprogram-automator":
+            # 页面级证据：真实路由到 pages/home/index + 页面上真实节点计数
+            self._assert(home_step.get("pagePath") == "pages/home/index", f"首页路由异常：{home_step.get('pagePath')}")
+            self._assert(
+                int(home_step.get("renderedItems") or 0) == len(body.get("items", [])),
+                f"页面上数到的资源条目（{home_step.get('renderedItems')}）与接口返回（{len(body.get('items', []))}）不一致",
+            )
+            self._assert(int(rendered.get("items") or 0) >= 3, f"页面上未渲染出 ≥3 个资源条目：{rendered.get('items')}")
+            self._assert(
+                (trace.get("screenshots") or {}).get("home", {}).get("ok") is True,
+                "automator 未产出首页截图",
+            )
+            audit = (trace.get("serverAudit") or {}).get("home") or {}
+            self._assert(audit.get("step_key") == "miniapp_home", f"服务端未记录第 12 步 audit：{audit}")
         self.created["recommendation_id"] = body["recommendation_id"]
         return {
             "assertion": (
-                f"小程序首页渲染 {month} 首月资源包 {len(body['items'])} 项（渲染树条目数与数据一致），"
+                f"小程序首页渲染 {month} 首月资源包 {len(body['items'])} 项"
+                f"（页面上数到 {home_step.get('renderedItems') or len(body['items'])} 个节点，与数据一致），"
                 f"GET /api/miniapp/home → 200（{call.get('durationMs')}ms），链路状态=activated"
             ),
             "evidence": {
                 "executor": trace.get("tool"),
                 "executor_note": trace.get("note"),
+                "home_page": home_step.get("pagePath"),
+                "rendered_items": home_step.get("renderedItems"),
+                "rendered_texts": rendered.get("itemTexts"),
+                "month_text": home_step.get("monthText"),
+                "screenshots": (trace.get("screenshots") or {}),
                 "request": {k: call.get(k) for k in ("method", "path", "statusCode", "durationMs")},
                 "response": body,
                 "component_phase": phases.get("home"),
@@ -701,6 +796,9 @@ class ChainRunner:
             "scenario": self.scenario,
             "mode": self.mode,
             "skip_miniprogram": self.skip_miniprogram,
+            "miniapp_executor_requested": self.miniapp_executor_requested,
+            "miniapp_executor": self.miniapp_executor,
+            "miniapp_executor_fallback": self.miniapp_executor_fallback,
             "base_url": self.base_url,
             "started_at": _iso(self.started_at) if self.started_at else "",
             "finished_at": _iso(self.finished_at) if self.finished_at else "",
@@ -726,9 +824,17 @@ def run_chain(
     skip_miniprogram: bool = False,
     headless: bool = True,
     scenario: str = "chain",
+    miniapp_executor: str = "auto",
 ) -> tuple[ChainRunner, dict, ChainFailure | None]:
     """执行一条链并保证收尾：无论成败都清理数据、落盘报告。"""
-    runner = ChainRunner(base_url, run_id, skip_miniprogram=skip_miniprogram, headless=headless, scenario=scenario)
+    runner = ChainRunner(
+        base_url,
+        run_id,
+        skip_miniprogram=skip_miniprogram,
+        headless=headless,
+        scenario=scenario,
+        miniapp_executor=miniapp_executor,
+    )
     failure: ChainFailure | None = None
     try:
         runner.execute()

@@ -10,7 +10,7 @@ mkdir -p "$OUT"
 for i in 1 2 3 4 5; do
   echo "==================== 第 ${i} / 5 次 ===================="
   mkdir -p "$OUT/run_${i}"
-  if ! .venv/bin/python -m pytest -m chain -q --run-tag "5x-r${i}" 2>&1 | tee "$OUT/run_${i}/pytest.log"; then
+  if ! .venv/bin/python -m pytest -m chain -q --run-tag "5x-r${i}" "$@" 2>&1 | tee "$OUT/run_${i}/pytest.log"; then
     echo "第 ${i} 次未通过，终止"
     exit 1
   fi

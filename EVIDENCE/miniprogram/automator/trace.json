@@ -1,0 +1,427 @@
+{
+  "tool": "miniprogram-automator",
+  "note": "微信官方 miniprogram-automator + 微信开发者工具自动化端口；真实页面（pages/entry → pages/home）、真实 input/button 事件、真实 wx.navigateTo 路由、真实渲染节点。非真机（未安装到手机），无微信登录态（code2session 由平台桩替代）。",
+  "startedAt": "2026-11-24T06:29:45.206Z",
+  "endedAt": "2026-11-24T06:29:53.884Z",
+  "baseUrl": "http://127.0.0.1:5600",
+  "memberId": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+  "runId": "smk-auto14-20261124-142939-a30c",
+  "verifyCode": "123456",
+  "devtoolsCli": "C:\\wdt\\cli.bat",
+  "port": 9420,
+  "steps": [
+    {
+      "stage": "connect",
+      "name": "连接已开启自动化端口的开发者工具窗口（复用已编译好的小程序项目）",
+      "phase": "connected",
+      "durationMs": 19,
+      "projectPath": "C:\\Users\\X\\AppData\\Local\\Temp\\2828_auto\\miniapp",
+      "wsEndpoint": "ws://127.0.0.1:9420",
+      "autoPort": 9420,
+      "portWasOpen": true
+    },
+    {
+      "stage": "entry",
+      "name": "reLaunch 到 pages/entry/index 并等待页面数据就绪",
+      "pagePath": "/pages/entry/index",
+      "durationMs": 4456,
+      "waitMs": 11,
+      "phase": "idle",
+      "domSha256": "fcf72a6aa59dcefdf7dd99cec65613d5c5cee0d0ee4f2f0dc2b7d2b734163f08"
+    },
+    {
+      "stage": "certify",
+      "name": "页面内输入验证码并点击「提交认证」按钮（真实点击事件）",
+      "pagePath": "/pages/entry/index",
+      "durationMs": 1751,
+      "waitMs": 412,
+      "phase": "certified",
+      "domSha256": "461f062eda86c3765f94884f54b57e249677b4eb5a91aaa021e916b7e786f1d4"
+    },
+    {
+      "stage": "home",
+      "name": "首页渲染首月资源推荐（页面上真实节点计数）",
+      "pagePath": "pages/home/index",
+      "durationMs": 1456,
+      "waitMs": 15,
+      "phase": "home",
+      "domSha256": "73a8be4b4fc82518c8134d67d9453a7b41417b3bb9bf159d68c6693d15c8aad4",
+      "renderedItems": 3,
+      "monthText": "资源月份：2026-11",
+      "countText": "共 3 项资源"
+    }
+  ],
+  "events": [
+    {
+      "seq": 1,
+      "name": "page.entry.ready",
+      "detail": {
+        "phase": "idle"
+      }
+    },
+    {
+      "seq": 2,
+      "name": "tap.certify"
+    },
+    {
+      "seq": 3,
+      "name": "page.certified",
+      "detail": {
+        "certify_status": "certified"
+      }
+    },
+    {
+      "seq": 4,
+      "name": "page.home.ok",
+      "detail": {
+        "items": 3
+      }
+    }
+  ],
+  "requests": [
+    {
+      "seq": 1,
+      "at": "2026-11-24T06:29:51.941Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:5600/api/miniapp/certify",
+      "path": "/api/miniapp/certify",
+      "statusCode": 200,
+      "requestHeaders": {
+        "x-run-id": "smk-auto14-20261124-142939-a30c",
+        "content-type": "application/json"
+      },
+      "requestBody": {
+        "member_id": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "verify_code": "123456"
+      },
+      "responseBody": {
+        "step": "签约企业联系人在小程序完成认证",
+        "member_id": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "channel": "miniprogram-stub",
+        "application_status": "certified",
+        "duration_ms": 31,
+        "at": 1795501790279
+      },
+      "durationMs": 31,
+      "capture": "页面数据回读（wx.request 在开发者工具运行时内执行，响应由页面 setData 保存）"
+    },
+    {
+      "seq": 2,
+      "at": "2026-11-24T06:29:52.985Z",
+      "method": "GET",
+      "url": "http://127.0.0.1:5600/api/miniapp/home?member_id=5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+      "path": "/api/miniapp/home?member_id=5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+      "statusCode": 200,
+      "requestHeaders": {
+        "x-run-id": "smk-auto14-20261124-142939-a30c"
+      },
+      "requestBody": null,
+      "responseBody": {
+        "step": "小程序首页看到首月资源推荐",
+        "recommendation_id": "3cc03456-98e1-4325-a4d2-b1ff924b5636",
+        "member_id": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "month": "2026-11",
+        "headline": "2026-11 首月资源包",
+        "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-LOUNGE-8",
+            "name": "洽谈区使用 8 次",
+            "quota": 8,
+            "unit": "次",
+            "source": "miniprogram-stub"
+          },
+          {
+            "code": "RES-PARK-2",
+            "name": "固定车位 2 个",
+            "quota": 2,
+            "unit": "个",
+            "source": "miniprogram-stub"
+          }
+        ],
+        "application_status": "activated"
+      },
+      "durationMs": 18,
+      "capture": "页面数据回读（同 certify）"
+    }
+  ],
+  "assertions": [
+    {
+      "name": "小程序从 pages/entry/index 进入（真实页面，非组件宿主）",
+      "ok": true,
+      "detail": {
+        "pagePath": "/pages/entry/index",
+        "phase": "idle",
+        "memberId": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "waitMs": 11
+      }
+    },
+    {
+      "name": "入口页渲染出验证码输入框与提交按钮",
+      "ok": true,
+      "detail": {
+        "inCustomComponent": true,
+        "component": "components/member-entry/index",
+        "componentNodeHandle": true,
+        "inputNodeFound": true,
+        "buttonNodeFound": true,
+        "inputOuterWxml": "<input class=\"code-input\" placeholder=\"6 位短信验证码\" value=\"\" maxlength=\"6\" type=\"number\"></input>",
+        "buttonOuterWxml": "<button class=\"btn certify-btn\" loading=\"false\">提交认证</button>"
+      }
+    },
+    {
+      "name": "页面 <input> 真实输入 6 位验证码",
+      "ok": true,
+      "detail": {
+        "inputValue": "123456",
+        "componentVerifyCode": "",
+        "expect": "123456"
+      }
+    },
+    {
+      "name": "认证接口在页面内真实返回 certified",
+      "ok": true,
+      "detail": {
+        "certify_status": "certified",
+        "openid_stub": "wx_stub_96b7717fe29b",
+        "application_status": "certified"
+      }
+    },
+    {
+      "name": "小程序桩 openid 形如 wx_stub_*",
+      "ok": true,
+      "detail": "wx_stub_96b7717fe29b"
+    },
+    {
+      "name": "认证成功后 wx.navigateTo 真实跳转到 pages/home/index",
+      "ok": true,
+      "detail": {
+        "currentPath": "pages/home/index",
+        "waitMs": 412
+      }
+    },
+    {
+      "name": "首页在页面上渲染出 ≥3 个资源条目",
+      "ok": true,
+      "detail": {
+        "renderedItems": 3,
+        "itemTexts": [
+          {
+            "name": "共享会议室 4 小时",
+            "quota": "配额 4小时"
+          },
+          {
+            "name": "洽谈区使用 8 次",
+            "quota": "配额 8次"
+          },
+          {
+            "name": "固定车位 2 个",
+            "quota": "配额 2个"
+          }
+        ]
+      }
+    },
+    {
+      "name": "页面可见条目数与接口 items 数一致",
+      "ok": true,
+      "detail": {
+        "renderedItems": 3,
+        "apiItems": 3
+      }
+    },
+    {
+      "name": "页面可见月份与接口返回月份一致",
+      "ok": true,
+      "detail": {
+        "monthText": "资源月份：2026-11",
+        "apiMonth": "2026-11"
+      }
+    },
+    {
+      "name": "所有可见资源配额为正数",
+      "ok": true,
+      "detail": [
+        {
+          "name": "共享会议室 4 小时",
+          "quota": "配额 4小时"
+        },
+        {
+          "name": "洽谈区使用 8 次",
+          "quota": "配额 8次"
+        },
+        {
+          "name": "固定车位 2 个",
+          "quota": "配额 2个"
+        }
+      ]
+    },
+    {
+      "name": "服务端 audit 记录到第 11 步事件（请求携带正确 x-run-id 才会命中本 run）",
+      "ok": true,
+      "detail": {
+        "step_no": 11,
+        "step_key": "miniapp_certify",
+        "event": "miniapp_certify:ok",
+        "payload": {
+          "member_id": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+          "openid_stub": "wx_stub_96b7717fe29b"
+        }
+      }
+    },
+    {
+      "name": "服务端 audit 记录到第 12 步事件",
+      "ok": true,
+      "detail": {
+        "step_no": 12,
+        "step_key": "miniapp_home",
+        "event": "miniapp_home:ok",
+        "payload": {
+          "recommendation_id": "3cc03456-98e1-4325-a4d2-b1ff924b5636",
+          "month": "2026-11"
+        }
+      }
+    },
+    {
+      "name": "服务端 audit 的 member_id 与本次小程序会话一致",
+      "ok": true,
+      "detail": {
+        "auditMemberId": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "expected": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e"
+      }
+    }
+  ],
+  "screenshots": {
+    "entry": {
+      "file": "01_entry.png",
+      "ok": true,
+      "note": "入口页初始态"
+    },
+    "certify": {
+      "file": "01b_entry_certified.png",
+      "ok": true,
+      "note": "认证完成后（已真实跳转首页）"
+    },
+    "home": {
+      "file": "02_home.png",
+      "ok": true,
+      "note": "首页首月资源推荐"
+    },
+    "homeFull": {
+      "file": "03_home_full.png",
+      "ok": true,
+      "note": "首页完整截图（含事件日志）"
+    }
+  },
+  "rendered": {
+    "items": 3,
+    "itemTexts": [
+      {
+        "name": "共享会议室 4 小时",
+        "quota": "配额 4小时"
+      },
+      {
+        "name": "洽谈区使用 8 次",
+        "quota": "配额 8次"
+      },
+      {
+        "name": "固定车位 2 个",
+        "quota": "配额 2个"
+      }
+    ],
+    "monthText": "资源月份：2026-11",
+    "countText": "共 3 项资源"
+  },
+  "serverAudit": {
+    "applicationStatus": "activated",
+    "certify": {
+      "step_no": 11,
+      "step_key": "miniapp_certify",
+      "event": "miniapp_certify:ok",
+      "payload": {
+        "member_id": "5d455fcc-9931-48e2-8e69-790a0a8a9f2e",
+        "openid_stub": "wx_stub_96b7717fe29b"
+      }
+    },
+    "home": {
+      "step_no": 12,
+      "step_key": "miniapp_home",
+      "event": "miniapp_home:ok",
+      "payload": {
+        "recommendation_id": "3cc03456-98e1-4325-a4d2-b1ff924b5636",
+        "month": "2026-11"
+      }
+    },
+    "events": [
+      {
+        "step_no": 1,
+        "step_key": "site_apply",
+        "event": "site_apply:ok"
+      },
+      {
+        "step_no": 2,
+        "step_key": "lead_assign",
+        "event": "lead_assign:ok"
+      },
+      {
+        "step_no": 3,
+        "step_key": "first_contact",
+        "event": "first_contact:ok"
+      },
+      {
+        "step_no": 4,
+        "step_key": "book_visit",
+        "event": "book_visit:ok"
+      },
+      {
+        "step_no": 5,
+        "step_key": "visitor_checkin",
+        "event": "visitor_checkin:ok"
+      },
+      {
+        "step_no": 6,
+        "step_key": "minutes_confirm",
+        "event": "minutes_confirm:ok"
+      },
+      {
+        "step_no": 7,
+        "step_key": "quote",
+        "event": "quote:ok"
+      },
+      {
+        "step_no": 8,
+        "step_key": "esign",
+        "event": "esign:ok"
+      },
+      {
+        "step_no": 9,
+        "step_key": "room_rented",
+        "event": "room_rented:ok"
+      },
+      {
+        "step_no": 10,
+        "step_key": "handover_claim",
+        "event": "handover_claim:ok"
+      },
+      {
+        "step_no": 11,
+        "step_key": "miniapp_certify",
+        "event": "miniapp_certify:ok"
+      },
+      {
+        "step_no": 12,
+        "step_key": "miniapp_home",
+        "event": "miniapp_home:ok"
+      }
+    ]
+  },
+  "result": "passed",
+  "failedAssertions": []
+}

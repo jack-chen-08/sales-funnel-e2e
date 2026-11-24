@@ -48,6 +48,7 @@ Component({
     /** 第 11 步：提交企业联系人认证 */
     onCertify() {
       const code = String(this.data.verifyCode || "").trim();
+      const startedAt = Date.now();
       this._pushEvent("tap.certify");
       if (!/^\d{6}$/.test(code)) {
         this.setData({ phase: "error", phaseLabel: PHASE_LABEL.error, errorMsg: "请输入 6 位数字验证码" });
@@ -77,7 +78,7 @@ Component({
             errorMsg: ""
           });
           this._pushEvent("certify.ok");
-          this.triggerEvent("certified", body);
+          this.triggerEvent("certified", Object.assign({}, body, { duration_ms: Date.now() - startedAt }));
           return { ok: true, body };
         }
         const detail = (body.detail && body.detail.code) || body.detail || "unknown";

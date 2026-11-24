@@ -1,0 +1,64 @@
+.home-page {
+  padding: 24rpx;
+}
+
+.page-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #8a94a6;
+  padding: 8rpx 4rpx 16rpx;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(31, 111, 235, 0.08);
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1f2d3d;
+}
+
+.month {
+  margin-top: 8rpx;
+  font-size: 26rpx;
+  color: #5b6675;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  padding: 18rpx 0;
+  border-bottom: 1rpx solid #eef1f6;
+  font-size: 28rpx;
+}
+
+.item-name {
+  color: #1f2d3d;
+}
+
+.item-quota {
+  color: #1f6feb;
+}
+
+.item-count,
+.app-status {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #8a94a6;
+}
+
+.loading,
+.error {
+  padding: 24rpx;
+  font-size: 26rpx;
+  color: #8a94a6;
+}
+
+.error {
+  color: #c0392b;
+}

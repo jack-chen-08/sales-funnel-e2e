@@ -1,6 +1,6 @@
 {
   "step": "签约企业联系人在小程序完成认证",
-  "run_id": "smk-5x-r2-20261124-033655-33ba",
+  "run_id": "smk-5x-r2-20261124-142837-e421",
   "calls": [
     {
       "source": "miniapp",
@@ -9,26 +9,33 @@
       "status": 200,
       "response": {
         "step": "签约企业联系人在小程序完成认证",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "certify_status": "certified",
         "openid_stub": "wx_stub_96b7717fe29b",
         "channel": "miniprogram-stub",
         "application_status": "certified"
       },
-      "duration_ms": 20
+      "duration_ms": 18
     },
     {
       "source": "miniapp",
       "method": "GET",
-      "path": "/api/miniapp/home?member_id=9ed42eb8-d65f-4907-9841-1934007542bd",
+      "path": "/api/miniapp/home?member_id=d70f2e1e-f71b-442f-8819-d6ee1362db31",
       "status": 200,
       "response": {
         "step": "小程序首页看到首月资源推荐",
-        "recommendation_id": "cff4ca4f-839b-4f03-908f-594c03f49b46",
-        "member_id": "9ed42eb8-d65f-4907-9841-1934007542bd",
+        "recommendation_id": "9b0ba13d-6c6e-49d0-8d38-2d95cfac70ae",
+        "member_id": "d70f2e1e-f71b-442f-8819-d6ee1362db31",
         "month": "2026-11",
         "headline": "2026-11 首月资源包",
         "items": [
+          {
+            "code": "RES-MEETING-4",
+            "name": "共享会议室 4 小时",
+            "quota": 4,
+            "unit": "小时",
+            "source": "miniprogram-stub"
+          },
           {
             "code": "RES-LOUNGE-8",
             "name": "洽谈区使用 8 次",
@@ -41,13 +48,6 @@
             "name": "黑白打印 500 页",
             "quota": 500,
             "unit": "页",
-            "source": "miniprogram-stub"
-          },
-          {
-            "code": "RES-MEETING-4",
-            "name": "共享会议室 4 小时",
-            "quota": 4,
-            "unit": "小时",
             "source": "miniprogram-stub"
           }
         ],

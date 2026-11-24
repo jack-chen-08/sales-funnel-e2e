@@ -1,3 +1,16 @@
-page {
-  background: #f5f7fa;
+.entry-page {
+  padding: 24rpx;
+}
+
+.page-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24rpx;
+  color: #8a94a6;
+  padding: 8rpx 4rpx 16rpx;
+}
+
+.page-phase[data-phase="certified"] {
+  color: #1a7f37;
 }

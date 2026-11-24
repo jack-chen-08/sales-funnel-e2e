@@ -1,6 +1,7 @@
 {
   "pages": [
-    "pages/entry/index"
+    "pages/entry/index",
+    "pages/home/index"
   ],
   "window": {
     "navigationBarTitleText": "园区会员服务",

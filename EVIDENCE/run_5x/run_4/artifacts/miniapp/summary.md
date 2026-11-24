@@ -1,9 +1,9 @@
 # 小程序两步执行记录
 
-- 执行时间（UTC）：2026-11-23T19:37:10.043Z → 2026-11-23T19:37:10.265Z
+- 执行时间（UTC）：2026-11-24T06:28:51.539Z → 2026-11-24T06:28:51.762Z
 - 执行环境：Node v22.22.3 + 微信官方 miniprogram-simulate（非真机）
 - 平台地址：http://127.0.0.1:5600
-- run_id：smk-5x-r4-20261124-033705-7779　member_id：2be69e2f-58b9-4395-b3a5-2a01673e77d4
+- run_id：smk-5x-r4-20261124-142847-54bd　member_id：dd0a291d-8f2e-44f1-b5ee-999ebd7b4661
 - 结论：**passed**（断言 21 条，失败 0 条）
 
 ## 步骤与渲染树
@@ -12,14 +12,14 @@
 | --- | --- | --- | --- | --- |
 | 初始 | idle | 4ced3a671a762587 | 962 | 01_initial_render.html |
 | 第 11 步 认证后 | certified | e1fffa1d69bd166b | 1309 | 02_after_certify.html |
-| 第 12 步 首页后 | home | 8e1e40f280d1c701 | 2276 | 03_after_home.html |
+| 第 12 步 首页后 | home | 3536d2ca93be7a5a | 2273 | 03_after_home.html |
 
 ## 真实 HTTP 请求
 
 | # | 方法 | 路径 | 状态码 | 耗时(ms) | 响应要点 |
 | --- | --- | --- | --- | --- | --- |
-| 1 | POST | /api/miniapp/certify | 200 | 23 | certify_status=certified, openid=wx_stub_96b7717fe29b |
-| 2 | GET | /api/miniapp/home?member_id=2be69e2f-58b9-4395-b3a5-2a01673e77d4 | 200 | 13 | month=2026-11, items=3 |
+| 1 | POST | /api/miniapp/certify | 200 | 22 | certify_status=certified, openid=wx_stub_96b7717fe29b |
+| 2 | GET | /api/miniapp/home?member_id=dd0a291d-8f2e-44f1-b5ee-999ebd7b4661 | 200 | 16 | month=2026-11, items=3 |
 
 ## 交互事件序列
 
@@ -35,18 +35,18 @@
 | 找到验证码输入框 .code-input | PASS | — |
 | 找到「提交认证」按钮 .certify-btn | PASS | — |
 | 第 11 步向平台发起真实 HTTP 请求 POST /api/miniapp/certify | PASS | `"/api/miniapp/certify"` |
-| 认证请求带 x-run-id 头（run 数据隔离） | PASS | `{"content-type":"application/json","x-run-id":"smk-5x-r4-20261124-033705-7779"}` |
+| 认证请求带 x-run-id 头（run 数据隔离） | PASS | `{"content-type":"application/json","x-run-id":"smk-5x-r4-20261124-142847-54bd"}` |
 | 认证接口返回 200 | PASS | `200` |
-| 认证接口返回 certify_status=certified | PASS | `{"step":"签约企业联系人在小程序完成认证","member_id":"2be69e2f-58b9-4395-b3a5-2a01673e77d4","certify_status":"certified","openid_stub":"wx_stub_96b7717fe29b","channel":"miniprogram-stub","application_status":"certified"}` |
+| 认证接口返回 certify_status=certified | PASS | `{"step":"签约企业联系人在小程序完成认证","member_id":"dd0a291d-8f2e-44f1-b5ee-999ebd7b4661","certify_status":"certified","openid_stub":"wx_stub_96b7717fe29b","channel":"miniprogram-stub","application_status":"certified"}` |
 | 组件阶段切换为已认证（phase=certified） | PASS | `"certified"` |
 | 渲染树显示认证状态 certified | PASS | — |
 | 组件触发 certified 事件 | PASS | `["certified"]` |
 | 找到「进入首页」按钮 .home-btn | PASS | — |
-| 第 12 步向平台发起真实 HTTP 请求 GET /api/miniapp/home | PASS | `"/api/miniapp/home?member_id=2be69e2f-58b9-4395-b3a5-2a01673e77d4"` |
+| 第 12 步向平台发起真实 HTTP 请求 GET /api/miniapp/home | PASS | `"/api/miniapp/home?member_id=dd0a291d-8f2e-44f1-b5ee-999ebd7b4661"` |
 | 首页接口返回 200 | PASS | `200` |
 | 组件阶段切换为已进入首页（phase=home） | PASS | `"home"` |
 | 首月资源条目不少于 3 项 | PASS | `3` |
-| 每条资源配额为正数 | PASS | `[2,4,8]` |
+| 每条资源配额为正数 | PASS | `[2,500,8]` |
 | 资源月份与接口返回一致 | PASS | `{"dom":"2026-11","api":"2026-11"}` |
 | 渲染树中资源条目数量与数据一致 | PASS | `{"rendered":3,"data":3}` |
 | 渲染树包含资源月份与条目数文案 | PASS | `{"month":"2026-11","count":3}` |

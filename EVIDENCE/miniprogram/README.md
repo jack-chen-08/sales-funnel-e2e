@@ -23,7 +23,13 @@
 2. **无像素截图**：模拟器输出渲染树（WXML 解析 + WXSS 作用域后的 DOM 结构），不产生位图。需要像素级界面留证请在微信开发者工具或真机执行。
 3. **无微信登录态**：`code2session` 由平台侧桩替代，`openid` 为确定性桩值（`wx_stub_*`）。
 4. 渲染树中的手机号 `13800000001` 为演示占位号，非真实号码。
-5. **只加载组件**：执行入口是 `miniapp/components/member-entry`，`pages/entry` 页面壳与 `app.json` 路由（`wx.navigateTo`）**未执行**——`miniprogram-simulate` 不支持页面路由。要页面级只有微信开发者工具 + `miniprogram-automator`（AppID + 扫码，属外部条件）。
+5. **本目录是组件级证据**：执行入口是 `miniapp/components/member-entry`，`pages/entry` 页面壳与 `app.json` 路由（`wx.navigateTo`）**未执行**——`miniprogram-simulate` 不支持页面路由。
+
+## 页面级证据（另见 `automator/`）
+
+`automator/` 子目录是**页面级**真跑证据：微信开发者工具 + 官方 `miniprogram-automator`，
+真实页面 `pages/entry/index` → 真实 `<input>`/`<button>` → 真实 `wx.navigateTo` → `pages/home/index`，
+带 4 张像素截图、13 条断言、12/12 整链报告。运行标识 `smk-auto14-20261124-142939-a30c`，详见 `automator/RUN.md`。
 
 ## 复现
 

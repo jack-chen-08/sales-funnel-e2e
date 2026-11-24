@@ -14,7 +14,9 @@ fi
 
 echo "[setup-miniapp] node $(node -v) / npm $(npm -v)"
 
-if [ -d "$MINIAPP/node_modules/miniprogram-simulate" ] && [ -d "$MINIAPP/node_modules/jsdom-global" ]; then
+if [ -d "$MINIAPP/node_modules/miniprogram-simulate" ] \
+  && [ -d "$MINIAPP/node_modules/jsdom-global" ] \
+  && [ -d "$MINIAPP/node_modules/miniprogram-automator" ]; then
   echo "[setup-miniapp] 依赖已就绪，跳过安装"
   exit 0
 fi

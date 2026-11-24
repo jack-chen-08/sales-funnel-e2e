@@ -2,7 +2,8 @@
 
 把「官网提交申请 → 首次进入会员小程序」串成 1 条链式用例，用作发版前闸门与夜间冒烟。
 框架：Playwright 1.49 + pytest 8.3 + FastAPI mock 平台 + PostgreSQL 16；小程序两步由微信官方
-`miniprogram-simulate` 在 Node 端组件级真跑，可用 `--skip-miniprogram` 跳过。
+`miniprogram-automator`（页面级，经微信开发者工具自动化端口）驱动真实页面与路由，`miniprogram-simulate`
+（组件级）作无开发者工具环境的补充；两者都可用 `--skip-miniprogram` 跳过。
 
 - 12 步顺序执行，每步断言关键状态并记录 start / end / duration
 - 数据用独立 `run_id`（`smk-<tag>-<时间戳>-<4位随机>`），结束（含失败）自动按 `run_id` 清理并回查残留必须为 0
@@ -47,8 +48,9 @@ cp .env.example .env      # 按需改端口与数据库口令
 # 2) 起环境：PostgreSQL 16（docker compose）→ Alembic 建表 → 启动 mock 平台 :5600
 bash scripts/start_env.sh
 
-# 3) 跑 12 步链式用例（AC1）
+# 3) 跑 12 步链式用例（AC1；小程序两步默认 auto：有开发者工具走 automator，否则回退 simulate）
 bash scripts/run_chain.sh
+#   指定页面级执行器：bash scripts/run_chain.sh --miniapp-executor automator
 #   等价：.venv/bin/python -m pytest -m chain -q
 
 # 4) 跳过小程序两步（AC4）：其余 10 步照常执行
@@ -169,32 +171,97 @@ SELECT sum(rows) AS remaining_rows_total FROM (
 | S4-SITE 官网与入会申请 | mock 平台自带官网页面 | `app/main.py` `/site/apply*`；用例 `tests/core/runner.py:step_01` |
 | S3-SALES 业务员工作台 v1 | mock 工作台页面 + 接口 | `/advisor/console`、`/api/leads/*`、`/api/visits/*`、`/api/quotes` |
 | S2-CRM 电子签 | `EsignStub`（`SIGN_STUB_MODE`） | `app/stubs.py:sign_envelope` |
-| S3-MINI 会员小程序 v1 | 官方 `miniprogram-simulate`（组件级） | 仓库内 `miniapp/` + `/api/miniapp/*`；页面级需 miniprogram-automator |
+| S3-MINI 会员小程序 v1 | 官方 `miniprogram-automator`（页面级，主）/ `miniprogram-simulate`（组件级，补充） | 仓库内 `miniapp/` + `/api/miniapp/*`；真实 AppID 与扫码登录属外部条件 |
 
 ## 已知短板
 
-- 小程序两步由微信官方 `miniprogram-simulate` 执行**组件级真跑**（21 条断言全 PASS）；**页面壳与路由未覆盖**，
-  要页面级/真机级需微信开发者工具 + `miniprogram-automator`（AppID + 扫码，属外部条件）。`--skip-miniprogram` 逻辑不变。
+- 小程序两步默认走 `miniprogram-automator`（页面级：真实页面、真实路由、真实节点、像素截图）。
+  本机/CI 无微信开发者工具时（`auto` 模式）自动回退 `miniprogram-simulate`（组件级），**回退原因写入报告**
+  （`miniapp_executor_fallback`），报告与交付说明里不会把回退写成 automator 已跑。`--skip-miniprogram` 逻辑不变。
+- 两个执行器都不是真机：未接真实 AppID 与微信登录态，`code2session` 由平台桩替代（`openid` 为确定性桩值）。
 - 除 4 步浏览器点击 + 2 步官方模拟器外，其余 6 步走接口；这是为了让链条在无 UI 的存量模块上也能跑，全链路口径仍是一条用例串行。
 - 耗时基线 4.5s（5 次平均）是本机 mock 的数值，接入真实系统后需重新标定 10 分钟阈值。
 - `smoke_runs` 运行台账在清理后保留 1 行（含 `cleaned_at`），便于审计；12 张业务表为 0。
 
-## 小程序两步的执行方式（组件级真跑；页面级未覆盖）
+## 小程序两步的执行方式（页面级 automator 为主，组件级 simulate 为补充）
 
-第 11、12 步（小程序内完成认证 / 首页首月资源推荐）由**微信官方 `miniprogram-simulate`** 在 Node 端执行：
+第 11、12 步（小程序内完成认证 / 首页首月资源推荐）有两个执行器，由 `--miniapp-executor`（或环境变量
+`MINIAPP_EXECUTOR`）选择，默认 `auto`：
 
-| 项 | 现状 |
-| --- | --- |
-| 小程序工程 | 仓库内 `miniapp/`（`app.js`/`app.json`/`app.wxss`/`pages/entry`/`components/member-entry`） |
-| 执行器 | `miniprogram-simulate`，内部由官方 `miniprogram-compiler` 编译真实 WXML/WXSS |
-| `wx.request` | 驱动脚本用 Node `http` 桥接，经 loopback 打到本仓自起平台（不出公网） |
-| 产出 | 三阶段渲染树、事件序列、请求/响应、21 条断言 → `reports/artifacts/<run_id>/miniapp/` |
-| 一条命令 | `bash scripts/setup_miniapp.sh` 后 `node scripts/miniapp_smoke.js --base-url http://127.0.0.1:5600 --member-id <uuid>` |
+| 执行器 | 驱动 | 覆盖范围 | 产出 |
+| --- | --- | --- | --- |
+| `automator`（主） | 微信官方 `miniprogram-automator` 经**微信开发者工具**自动化端口 | **页面级**：`app.json` 路由、`pages/entry` 真实 `<input>`/`<button>`、`wx.navigateTo` 真实跳转、`pages/home` 真实渲染节点、真实截图 | `01_entry.png`、`01b_entry_certified.png`、`02_home.png`、`03_home_full.png` + `trace.json`（含页面路径、节点计数、耗时）+ 服务端 audit 反证 |
+| `simulate`（补充） | 微信官方 `miniprogram-simulate` + `miniprogram-compiler` | **组件级**：单独加载 `components/member-entry`，真实 WXML/WXSS 渲染树、真实事件；不含页面壳/路由 | 三阶段渲染树 HTML + 事件序列 + 21 条断言 |
 
-**未覆盖**（要补需微信开发者工具 + `miniprogram-automator`，属外部条件）：
+`auto` 规则：开发者工具与依赖齐备 → `automator`；否则回退 `simulate`，并把
+`miniapp_executor` / `miniapp_executor_fallback` 写进 `reports/chain_<run_id>.json`，不静默声称跑过 automator。
 
-- `pages/entry` 页面壳与 `app.json` 路由——`wx.navigateTo` 未执行，simulate 不支持页面路由；
-- 像素截图——模拟器只输出渲染树，不产生位图；
-- 微信登录态——`code2session` 由平台桩替代，`openid` 为确定性桩值。
+小程序工程：仓库内 `miniapp/`（`app.json` 两页：`pages/entry/index` → `pages/home/index`，加 `components/member-entry`）。
+`wx.request` 由小程序运行时真实发出，打到本仓自起平台（`SMOKE_BASE_URL`，loopback，不出公网），请求头带本次 `x-run-id`。
+
+### 跑 automator（页面级）
+
+分两步：**先把自动化端口打开**，再跑用例。驱动不会半路去重启开发者工具——上一版试过让驱动自愈，
+工具被中途拉起时 automator 会挂在 `getPageMetaByWebviewId` 返回 `null` 上，状态不可预期，所以改成显式两步。
+
+```bash
+# 1) 依赖：miniprogram-automator（Node ≥ 16）
+bash scripts/setup_miniapp.sh
+
+# 2) 一次性前置（只做一次，之后长期有效）
+#    a) 微信开发者工具已安装，并已用微信扫码登录；
+#       —— 登录态持久化在本机资料目录，重启工具不用重新扫码，也不涉及手机号/短信。
+#    b) 工具内「设置 → 安全设置 → 服务端口」已打开；
+#    c) 小程序工程 project.config.json 的 appid 必须是当前登录账号有权访问的。
+#       仓库为可移植性保留 touristappid（AppID/AppSecret 一律不入库），
+#       真实跑通时把 miniapp/ 复制一份、只改 appid，再用 MINIAPP_PROJECT_DIR 指过去。
+
+export WECHAT_DEVTOOLS_CLI='C:\Program Files (x86)\Tencent\微信web开发者工具\cli.bat'
+export MINIAPP_PROJECT_DIR='C:\work\2828_miniapp'        # 带真实 appid 的工程目录（Windows 形式路径）
+export MINIAPP_NODE='C:\Program Files\nodejs\node.exe'   # WSL 里跑 pytest 时必须显式指定 Windows 侧 node
+export MINIAPP_AUTOMATOR_DRIVER='C:\work\2828_scripts\miniapp_automator.js'
+export MINIAPP_AUTOMATOR_WS='ws://127.0.0.1:9420'
+
+# 3) 打开自动化端口（显式一步；端口没开就明确报错，不会静默回退）
+bash scripts/open_automator_port.sh
+
+# 4) 平台与数据库（开发者工具要连得到，uvicorn 必须监听 0.0.0.0，不能只绑 127.0.0.1）
+bash scripts/start_env.sh
+
+# 5) 跑完整 12 步链（第 11、12 步走页面级 automator）
+.venv/bin/python -m pytest -m chain -q --miniapp-executor automator
+
+# 也可以只跑小程序两步（已有 run_id/member_id 时）：
+# node scripts/miniapp_automator.js --base-url http://127.0.0.1:5600 \
+#   --run-id <run_id> --member-id <member_uuid> --out reports/miniapp_autotest \
+#   --ws "$MINIAPP_AUTOMATOR_WS" --devtools-cli "$WECHAT_DEVTOOLS_CLI"
+```
+
+环境变量全部可选，缺省值：`MINIAPP_NODE=node`、`MINIAPP_PROJECT_DIR=<仓库>/miniapp`、
+`MINIAPP_AUTOMATOR_DRIVER=<仓库>/scripts/miniapp_automator.js`、`MINIAPP_AUTOMATOR_PORT=9420`。
+非 WSL 环境（Linux/macOS 原生 Node + 本地工程）无需设置前四个。
+
+实现说明（踩过的坑，已在代码里规避）：
+
+- 自定义组件内部节点：开发者工具把组件在页面树里暴露成 `<components/member-entry/index>`，
+  `page.$("member-entry")` 匹配不到，需遍历顶层节点按 `outerWxml` 前缀识别，再 `comp.$(".code-input")`。
+- 认证后页面立刻 `wx.navigateTo` 卸载，页面 `data` 会跟着消失；认证响应由页面落 `wx.setStorageSync`，
+  用例在路由完成后从 storage 回读，作为第 11 步的真实响应证据。
+- `miniprogram-automator` 自带 `launch()` 在 Node ≥ 18.20.2 / 20.12.2 上无法 `spawn .bat`（CVE 补丁后禁无 shell 调 .bat），
+  所以统一改成「`cli.bat auto` 起窗口 + `automator.connect` 连端口」。
+
+
+### 跑 simulate（组件级，CI 默认）
+
+```bash
+bash scripts/setup_miniapp.sh
+.venv/bin/python -m pytest -m chain -q --miniapp-executor simulate
+```
+
+### 能力边界（两个执行器共同）
+
+- **非真机**：执行环境是开发者工具 / Node 模拟器，不是手机微信客户端；真机验收需真实 AppID + 扫码。
+- **无微信登录态**：`code2session` 由平台桩替代，`openid` 为确定性桩值（`wx_stub_*`）。
+- `automator` 的运行记录（截图 + trace）见 `EVIDENCE/miniapp_automator_run.md`；未实际跑过的环境不做任何"已跑通"表述。
 
 要只跑其余 10 步（CI 的跑法）：加 `--skip-miniprogram`，两步骤记 `skipped`，链路仍串行。
